@@ -1,0 +1,160 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion minterMaxSdk
+    buildToolsVersion minterBuildTools
+    defaultConfig {
+        applicationId "io.monke.app"
+        minSdkVersion minterMinSdk
+        targetSdkVersion minterMaxSdk
+        versionCode appVersionCode
+        versionName appVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    lintOptions {
+        disable 'CheckResult', 'DefaultLocale'
+        abortOnError false
+        ignoreWarnings true
+    }
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+
+        }
+    }
+
+    flavorDimensions "env"
+
+    productFlavors {
+        netMain {
+            dimension "env"
+            applicationId = "io.monke.app"
+        }
+
+        netMainNoCrashlytics {
+            dimension "env"
+            applicationId = "io.monke.app"
+        }
+
+        netTest {
+            dimension "env"
+            applicationId = "io.monke.app.testnet"
+        }
+
+        netTestNoCrashlytics {
+            dimension "env"
+            applicationId = "io.monke.app.testnet"
+        }
+    }
+}
+
+dependencies {
+    netTestImplementation([
+            "network.minter.android:minter-android-core-testnet:${minterCoreSDK}",
+            "network.minter.android:minter-android-explorer-testnet:${minterExplorerSDK}",
+            "network.minter.android:minter-android-blockchain-testnet:${minterBlockchainSDK}",
+            "network.minter.android:minter-android-profile-testnet:${minterProfileSDK}"
+    ])
+    netMainImplementation([
+            "network.minter.android:minter-android-core:${minterCoreSDK}",
+            "network.minter.android:minter-android-explorer:${minterExplorerSDK}",
+            "network.minter.android:minter-android-blockchain:${minterBlockchainSDK}",
+            "network.minter.android:minter-android-profile:${minterProfileSDK}"
+    ])
+    netTestNoCrashlyticsImplementation([
+            "network.minter.android:minter-android-core-testnet:${minterCoreSDK}",
+            "network.minter.android:minter-android-explorer-testnet:${minterExplorerSDK}",
+            "network.minter.android:minter-android-blockchain-testnet:${minterBlockchainSDK}",
+            "network.minter.android:minter-android-profile-testnet:${minterProfileSDK}"
+    ])
+    netMainNoCrashlyticsImplementation([
+            "network.minter.android:minter-android-core:${minterCoreSDK}",
+            "network.minter.android:minter-android-explorer:${minterExplorerSDK}",
+            "network.minter.android:minter-android-blockchain:${minterBlockchainSDK}",
+            "network.minter.android:minter-android-profile:${minterProfileSDK}"
+    ])
+
+    // support
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.core:core:1.2.0-alpha02'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0-rc01'
+    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //qr
+    implementation 'com.google.zxing:core:3.3.3'
+    implementation 'com.google.zxing:android-core:3.3.0'
+    implementation 'com.google.zxing:android-integration:3.3.0'
+
+    // tools
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
+    implementation 'com.orhanobut:hawk:2.0.1'
+    implementation 'com.annimon:stream:1.2.1'
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    implementation 'com.github.pwittchen:rxbiometric:0.1.0'
+    implementation 'com.squareup.picasso:picasso:3.0.0-SNAPSHOT'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+
+    annotationProcessor 'io.sweers.barber:barber-compiler:1.3.1'
+    implementation 'io.sweers.barber:barber-api:1.3.1'
+
+    implementation 'net.danlew:android.joda:2.9.9.1'
+    implementation('com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.6.0') {
+        exclude group: 'joda-time'
+        exclude group: 'com.google.code.gson'
+    }
+    implementation('com.github.hotchemi:permissionsdispatcher:3.3.1') {
+        // if you don't use android.app.Fragment you can exclude support for them
+        exclude module: "support-v13"
+    }
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.3.1"
+
+    // Annotations and DI
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.23.2'
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.23.2'
+    implementation 'com.google.dagger:dagger:2.23.2'
+    implementation 'com.google.dagger:dagger-android-support:2.23.2'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+
+    //mvp
+    implementation 'com.github.moxy-community:moxy:1.0.14'
+    implementation 'com.github.moxy-community:moxy-androidx:1.0.14'
+    annotationProcessor 'com.github.moxy-community:moxy-compiler:1.0.14'
+
+    //rx
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
+
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
+        transitive = true
+    }
+
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}

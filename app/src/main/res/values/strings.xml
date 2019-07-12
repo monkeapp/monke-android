@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Monke</string>
+    <string name="btn_retry">Retry</string>
+    <string name="title_main">Set up Monke</string>
+    <string name="user_local_settings_key">io_monke_settings</string>
+
+    <string name="guide_step_1">Switch Monke keyboard on</string>
+    <string name="guide_step_1_button">Switch On</string>
+    <string name="guide_step_2">Select Monke in the keyboard list</string>
+    <string name="guide_step_2_button">Select Monke</string>
+    <string name="guide_step_3">Deposit your Monke</string>
+    <string name="guide_step_3_button">Deposit</string>
+    <string name="guide_step_3_skip">Skip</string>
+    <string name="font_medium">sans-serif-medium</string>
+    <string name="hint_address">Address</string>
+
+    <string name="balance_available" formatted="false">Available %s %s</string>
+</resources>

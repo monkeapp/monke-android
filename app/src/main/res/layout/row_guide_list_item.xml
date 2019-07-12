@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_edges"
+        android:layout_marginTop="@dimen/margin_edges_medium"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/text_size_default"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:textSize="@dimen/text_size_default"
+        app:layout_constraintStart_toEndOf="@id/number"
+        app:layout_constraintTop_toTopOf="@id/number"
+        tools:text="Switch Monke keyboard on"
+        />
+
+    <io.monke.app.internal.views.widgets.WalletButton
+        android:id="@+id/action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:textSize="@dimen/text_size_default"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:text="Switch on"
+        tools:visibility="visible"
+        />
+
+    <io.monke.app.internal.views.widgets.WalletButton
+        android:id="@+id/action_second"
+        style="@style/Wallet.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_edges_half_btn"
+        android:textSize="@dimen/text_size_default"
+        android:theme="@style/Wallet.Button"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/action"
+        app:layout_constraintTop_toTopOf="@id/action"
+        tools:text="Skip"
+        tools:visibility="visible"
+        />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="@dimen/margin_edges_half_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+.idea
+.DS_Store
+/build
+/release
+/captures
+.externalNativeBuild
+gradle/wrapper/gradle-wrapper.jar
+.keychain
+app/fabric.properties
+crashlytics-build.properties
+com_crashlytics_export_strings.xml

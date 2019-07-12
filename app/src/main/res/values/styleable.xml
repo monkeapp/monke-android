@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CardInputView">
+        <attr name="civ_text" format="string"/>
+        <attr name="civ_prefix_icon" format="reference"/>
+        <attr name="civ_suffix_icon" format="reference"/>
+        <attr name="civ_suffix_use_button" format="boolean"/>
+        <attr name="civ_suffix_text" format="string"/>
+        <attr name="civ_hint" format="string"/>
+        <attr name="civ_background" format="color"/>
+    </declare-styleable>
+</resources>

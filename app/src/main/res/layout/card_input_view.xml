@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   xmlns:tools="http://schemas.android.com/tools"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="44dp"
+                                   app:cardBackgroundColor="@color/white"
+                                   app:cardCornerRadius="2dp"
+                                   app:cardElevation="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/civ_left_icon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="@dimen/margin_edges_half"
+            android:src="@drawable/ic_copy"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/civ_input"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible"
+            />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/civ_input"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="@dimen/margin_edges_half"
+            android:background="@android:color/transparent"
+            android:fontFamily="@string/font_medium"
+            android:hint="ADDRESS"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:scrollbars="none"
+            android:singleLine="true"
+            android:tag="password"
+            android:textColorHint="?android:attr/textColorHint"
+            android:textSize="@dimen/text_size_12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/civ_action"
+            app:layout_constraintStart_toEndOf="@id/civ_left_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginStart="@dimen/margin_edges_half"
+            tools:text="Mx408fb7d25f40d0361ee370cff812c1fe1fac74a7"/>
+
+        <ImageView
+            android:id="@+id/civ_action"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/margin_edges_half"
+            android:background="?attr/selectableItemBackgroundBorderless"
+
+            android:src="@drawable/ic_copy"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/civ_input"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <io.monke.app.internal.views.widgets.WalletButton
+            android:id="@+id/civ_action_button"
+            style="@style/Wallet.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="MAX"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
