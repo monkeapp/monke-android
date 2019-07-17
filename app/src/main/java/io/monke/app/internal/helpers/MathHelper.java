@@ -93,6 +93,11 @@ public final class MathHelper {
     }
 
     // BigDecimal
+
+    public static boolean bdGTZ(BigDecimal from) {
+        return bdGT(from, BigDecimal.ZERO.setScale(18));
+    }
+
     public static boolean bdGT(BigDecimal from, double to) {
         return bdGT(from, new BigDecimal(to));
     }
@@ -135,6 +140,22 @@ public final class MathHelper {
             return false;
         }
         return from.compareTo(to) <= 0;
+    }
+
+    public static BigDecimal bdMin(BigDecimal a, BigDecimal b) {
+        if (bdGT(a, b)) {
+            return b;
+        }
+
+        return a;
+    }
+
+    public static BigDecimal bdMax(BigDecimal a, BigDecimal b) {
+        if (bdGTE(a, b)) {
+            return a;
+        }
+
+        return b;
     }
 
     public static String bdHuman(double source) {

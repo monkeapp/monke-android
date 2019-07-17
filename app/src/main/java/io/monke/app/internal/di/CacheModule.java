@@ -15,8 +15,8 @@ import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.internal.di.annotations.Cached;
 import io.monke.app.internal.storage.KVStorage;
 import io.monke.app.storage.AccountStorage;
+import io.monke.app.storage.AddressAccount;
 import io.monke.app.storage.SecretStorage;
-import io.monke.app.storage.UserAccount;
 import network.minter.explorer.MinterExplorerApi;
 import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
@@ -36,7 +36,7 @@ public abstract class CacheModule {
     // Just providing cached repositories
     @Provides
     @WalletApp
-    public static CachedRepository<UserAccount, AccountStorage> provideAccountStorage(AccountStorage accountStorage) {
+    public static CachedRepository<AddressAccount, AccountStorage> provideAccountStorage(AccountStorage accountStorage) {
         return new CachedRepository<>(accountStorage);
     }
 
@@ -63,7 +63,7 @@ public abstract class CacheModule {
     @IntoSet
     @Cached
     @WalletApp
-    public abstract CachedRepository provideAccountStorageForCache(CachedRepository<UserAccount, AccountStorage> cache);
+    public abstract CachedRepository provideAccountStorageForCache(CachedRepository<AddressAccount, AccountStorage> cache);
 
     @Binds
     @IntoSet

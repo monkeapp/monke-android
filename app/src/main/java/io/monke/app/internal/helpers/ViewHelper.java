@@ -41,6 +41,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.Nullable;
@@ -215,6 +219,20 @@ public final class ViewHelper {
         final View[] children = new View[viewGroup.getChildCount()];
         for (int i = 0; i < cnt; i++) {
             children[i] = viewGroup.getChildAt(i);
+        }
+
+        return children;
+    }
+
+    public static List<View> getChildrenList(@Nullable final ViewGroup viewGroup) {
+        if (viewGroup == null || viewGroup.getChildCount() == 0) {
+            return Collections.emptyList();
+        }
+
+        final int cnt = viewGroup.getChildCount();
+        final List<View> children = new ArrayList<>(viewGroup.getChildCount());
+        for (int i = 0; i < cnt; i++) {
+            children.add(viewGroup.getChildAt(i));
         }
 
         return children;

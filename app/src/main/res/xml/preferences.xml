@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="pref_day_night"
+        android:title="Use Night theme"
+        />
+
+    <Preference
+        android:key="set_backup_mnemonic"
+        android:title="@string/settings_backup_mnemonic"
+        />
+
+    <Preference
+        android:key="set_report_bug"
+        android:title="@string/settings_report_problem"
+        />
+
+    <Preference
+        android:key="set_rate_app"
+        android:title="@string/settings_rate_app"
+        />
+
+    <Preference
+        android:icon="@drawable/ic_make_donation"
+        android:key="set_make_donation"
+        android:summary="@string/settings_make_donation_desc"
+        android:title="@string/settings_make_donation_title"
+        />
+
+    <Preference
+        android:icon="@drawable/ic_buy_banana"
+        android:key="set_buy_banana"
+        android:summary="@string/settings_buy_banana_desc"
+        android:title="@string/settings_buy_banana_title"
+        />
+
+    <Preference
+        android:icon="@drawable/ic_telegram"
+        android:key="set_tg_channel"
+        android:summary="@string/settings_telegram_ch_desc"
+        android:title="@string/settings_telegram_ch_title"
+        />
+
+    <Preference
+        android:icon="@drawable/ic_about"
+        android:key="set_about"
+        android:summary="@string/settings_about_desc"
+        android:title="@string/settings_about_title"
+        />
+
+</PreferenceScreen>

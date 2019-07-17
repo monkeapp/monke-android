@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
@@ -64,41 +63,35 @@ public class SetupPresenter extends MvpBasePresenter<SetupView> {
         }};
 
         mAdapter = new SetupAdapter(items);
-        mAdapter.setOnActionClickListener(new SetupAdapter.OnActionClickListener() {
-            @Override
-            public void onClick(View view, GuideItem item) {
-                /*
+        mAdapter.setOnActionClickListener((view, item) -> {
+            /*
 
-                 */
+             */
 
-                switch (item.number) {
-                    case STEP_1:
-                        getViewState().startSystemKeyboardSettings(REQUEST_ENABLE_MONKE_KEYBOARD);
-                        break;
+            switch (item.number) {
+                case STEP_1:
+                    getViewState().startSystemKeyboardSettings(REQUEST_ENABLE_MONKE_KEYBOARD);
+                    break;
 
-                    case STEP_2:
-                        InputMethodManager mgr = (InputMethodManager) Monke.app().context().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (mgr != null) {
-                            mgr.showInputMethodPicker();
-                        }
-                        mAdapter.expand(STEP_3);
-                        break;
+                case STEP_2:
+                    InputMethodManager mgr = (InputMethodManager) Monke.app().context().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (mgr != null) {
+                        mgr.showInputMethodPicker();
+                    }
+                    mAdapter.expand(STEP_3);
+                    break;
 
-                    case STEP_3:
+                case STEP_3:
 
-                        break;
-                }
-
-
-                mAdapter.expand(item.number);
+                    break;
             }
+
+
+            mAdapter.expand(item.number);
         });
-        mAdapter.setOnActionSecondClickListener(new SetupAdapter.OnActionClickListener() {
-            @Override
-            public void onClick(View view, GuideItem item) {
-                if (item.number == STEP_3) {
-                    getViewState().finish();
-                }
+        mAdapter.setOnActionSecondClickListener((view, item) -> {
+            if (item.number == STEP_3) {
+                getViewState().finish();
             }
         });
         getViewState().setAdapter(mAdapter);

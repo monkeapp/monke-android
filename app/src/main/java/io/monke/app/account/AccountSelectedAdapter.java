@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -52,6 +53,14 @@ public class AccountSelectedAdapter extends RecyclerView.Adapter<AccountSelected
     private List<AccountItem> mItems;
     private LayoutInflater mInflater;
     private OnClickListener mOnClickListener;
+
+    public AccountSelectedAdapter() {
+        mItems = Collections.emptyList();
+    }
+
+    public void setItems(List<AccountItem> items) {
+        mItems = items;
+    }
 
     public AccountSelectedAdapter(List<AccountItem> items) {
         mItems = items;

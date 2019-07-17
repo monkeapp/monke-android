@@ -1,16 +1,16 @@
 package io.monke.app.ime;
 
+import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.KeyboardView;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.view.inputmethod.InputConnection;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.annimon.stream.Optional;
+import com.annimon.stream.Stream;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,16 +19,17 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
+import io.monke.app.BuildConfig;
 import io.monke.app.R;
-import io.monke.app.account.WalletAccountSelectorDialog;
 import io.monke.app.apis.explorer.CachedExplorerAddressRepository;
+import io.monke.app.ime.screens.SendScreen;
+import io.monke.app.internal.common.Lazy;
 import io.monke.app.internal.data.data.CachedRepository;
-import io.monke.app.internal.dialogs.WalletDialog;
-import io.monke.app.internal.views.widgets.BipCircleImageView;
+import io.monke.app.internal.helpers.ViewHelper;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AccountStorage;
+import io.monke.app.storage.AddressAccount;
 import io.monke.app.storage.SecretStorage;
-import io.monke.app.storage.UserAccount;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -38,50 +39,110 @@ import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
 import timber.log.Timber;
 
+import static io.monke.app.internal.helpers.MathHelper.bdGTE;
 import static io.monke.app.internal.helpers.MathHelper.bdHuman;
 
-public class MonkeKeyboard extends InputMethodService implements KeyboardView.OnKeyListener {
+public class MonkeKeyboard extends InputMethodService {
 
-    @BindView(R.id.input_amount) EditText inputAmount;
-    @BindView(R.id.input_address) EditText inputAddress;
-    @BindView(R.id.input_coin) EditText inputCoin;
     @BindView(R.id.wallet_address) TextView walletAddress;
     @BindView(R.id.balance) TextView balance;
     @BindView(R.id.balance_delegated) TextView balanceDelegated;
-    @BindView(R.id.balance_available) TextView balanceAvailable;
-    @BindView(R.id.fragment_container) FrameLayout fragmentContainer;
-    @BindView(R.id.keypad_hex) ViewGroup keyboardHex;
-    @BindView(R.id.keypad_digits) ViewGroup keyboardNumpad;
-    @BindView(R.id.amount_input_container) ViewGroup inputAmountContainer;
-    @BindView(R.id.coin_icon) BipCircleImageView coinIcon;
+    @BindView(R.id.bip_icon) View home;
+    @BindView(R.id.bip_progress) View progress;
+    @BindView(R.id.hide_keyboard) View buttonHideKeyboard;
+    @BindView(R.id.btn_close) View buttonClose;
+    @BindView(R.id.switch_keyboard) View buttonSwitchKeyboard;
+    @BindView(R.id.error_container) View errorContainer;
+    @BindView(R.id.error_text) TextView errorText;
+    @BindView(R.id.error_close) View errorClose;
+
     @Inject SecretStorage secretStorage;
-    @Inject CachedRepository<UserAccount, AccountStorage> accountStorage;
-    @Inject AccountStorage accounts;
+    @Inject CachedRepository<AddressAccount, AccountStorage> accountStorage;
     @Inject
     CachedRepository<ExpResult<List<DelegationInfo>>, CachedExplorerAddressRepository> expAddressRepo;
+    @Inject SendScreen screenSend;
     private ConstraintLayout mKeyboard;
-    private AccountItem mAccount;
+    private Optional<AccountItem> mAccount;
+    private Optional<AccountItem> mBananaAccount;
     private MinterAddress mAddress;
     private CompositeDisposable mDisposables = new CompositeDisposable();
-    private String mLastCoin = MinterSDK.DEFAULT_COIN;
-    private WalletDialog mDialog;
+    private List<OnUpdateAccountListener> mOnUpdateAccountListeners = new ArrayList<>(3);
+    private List<OnUpdateDelegatedListener> mOnUpdateDelegatedListener = new ArrayList<>(3);
+
+    public void showCloseButton(boolean show) {
+        showCloseButton(show, null);
+    }
+
+    public void showCloseButton(boolean show, View.OnClickListener listener) {
+        ViewHelper.switchView(buttonClose, buttonHideKeyboard, show);
+        buttonClose.setOnClickListener(show ? listener : null);
+    }
 
     @Override
     public void onCreate() {
+        setTheme(R.style.KB_Light);
         super.onCreate();
         AndroidInjection.inject(this);
+    }
+
+    public boolean hasEnoughBanana() {
+        return Stream.of(accountStorage.getData().getAccountsItems())
+                .filter(item -> item.coin.toLowerCase().equals(BuildConfig.BANANA_COIN.toLowerCase()))
+                .filter(item -> bdGTE(item.getBalance(), BigDecimal.ONE))
+                .count() > 0;
+    }
+
+    public void setError(CharSequence error) {
+        errorText.setText(error);
+        errorContainer.setVisibility(error != null ? View.VISIBLE : View.GONE);
+        errorClose.setOnClickListener(v -> setError(null));
+    }
+
+    public Lazy<AccountItem> getAccount() {
+        return () -> mAccount.get();
+    }
+
+    public Lazy<AccountItem> getBananaAccount() {
+        return () -> mBananaAccount.get();
+    }
+
+    public MinterAddress getAddress() {
+        return mAddress;
+    }
+
+    public void addOnUpdateAccountListener(OnUpdateAccountListener listener) {
+        mOnUpdateAccountListeners.add(listener);
+    }
+
+    public void updateBalance(boolean force) {
+        accountStorage.update(force);
+        expAddressRepo.update(force);
     }
 
     @Override
     public View onCreateInputView() {
         mKeyboard = (ConstraintLayout) getLayoutInflater().inflate(R.layout.keyboard_view, null);
         ButterKnife.bind(this, mKeyboard);
+        screenSend.init(this, mKeyboard);
+
+
         setBalance(BigDecimal.ZERO);
         setDelegatedBalance(BigDecimal.ZERO);
 
+        home.setOnClickListener(v -> {
+            showProgress(true);
+            accountStorage.update(true);
+            expAddressRepo.update(true);
+        });
 
-        mAccount = accounts.getAccount().getFirstAccountItem();
+        mAccount = accountStorage.getEntity().getData().findByCoin(MinterSDK.DEFAULT_COIN);
+        mBananaAccount = accountStorage.getEntity().getData().findByCoin(BuildConfig.BANANA_COIN).or(() -> {
+            AccountItem defAcc = new AccountItem(BuildConfig.BANANA_COIN, mAccount.get().getAddress(), BigDecimal.ZERO);
+            return Optional.of(defAcc);
+        });
+
         mAddress = secretStorage.getAddresses().get(0);
+
         walletAddress.setText(mAddress.toShortString());
         walletAddress.setOnClickListener(this::onClickWallet);
         accountStorage.update();
@@ -91,67 +152,65 @@ public class MonkeKeyboard extends InputMethodService implements KeyboardView.On
                 .subscribeOn(Schedulers.io())
                 .subscribe(res -> {
                     Timber.d("Loaded balance");
-                    mAccount = res.getFirstAccountItem();
+                    showProgress(false);
+                    mAccount = res.findByCoin(MinterSDK.DEFAULT_COIN);
+                    mBananaAccount = res.findByCoin(BuildConfig.BANANA_COIN);
                     setBalance(res.getTotalBalance());
+                    Stream.of(mOnUpdateAccountListeners).forEach(item -> item.onUpdate(res));
                 });
+
 
         expAddressRepo.update();
         expAddressRepo.observe()
                 .doOnSubscribe(d -> mDisposables.add(d))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
+                .doFinally(() -> showProgress(false))
                 .subscribe(res -> {
                     Timber.d("Loaded delegated");
-                    setDelegatedBalance(res.meta.additional.delegatedAmount);
+                    showProgress(false);
+                    if (res.getMeta().additional != null && res.getMeta().additional.delegatedAmount != null) {
+                        setDelegatedBalance(res.meta.additional.delegatedAmount);
+                    }
+
+                    Stream.of(mOnUpdateDelegatedListener).forEach(item -> item.onUpdate(res));
                 });
-        inputCoin.setText(mLastCoin);
 
-        inputAmount.setOnFocusChangeListener((view, hasFocus) -> {
-            keyboardHex.setVisibility(hasFocus ? View.VISIBLE : View.GONE);
+
+        buttonHideKeyboard.setOnClickListener(v -> {
+            requestHideSelf(0);
         });
-
-        inputAddress.setOnFocusChangeListener((v, hasFocus) -> {
-            keyboardNumpad.setVisibility(hasFocus ? View.VISIBLE : View.GONE);
-        });
-
-        inputCoin.setOnClickListener(v -> {
-            if (mAccount == null) {
-                Toast.makeText(getApplicationContext(), "Unable to select coin: internet connection problem", Toast.LENGTH_LONG).show();
-                return;
-            }
-            mDialog = new WalletAccountSelectorDialog.Builder(getApplicationContext())
-                    .addItem(mAccount)
-                    .setOnClickListener(item -> {
-                        inputCoin.setText(item.getCoin().toUpperCase());
-                        mLastCoin = item.getCoin().toUpperCase();
-                        coinIcon.setImageUrl(item.getAvatar());
-                        mDialog.dismiss();
-                    })
-                    .create();
-            mDialog.show();
+        buttonSwitchKeyboard.setOnClickListener(v -> {
+            startActivity(
+                    new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS)
+            );
         });
 
         return mKeyboard;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mDialog != null && mDialog.isShowing()) {
-            mDialog.dismiss();
-            mDialog = null;
-        }
-        Timber.d("OnDestroy KB");
+    public void showProgress(boolean show) {
+        home.setAlpha(show ? 0.5f : 1.0f);
+        progress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
-    public boolean onKey(View view, int i, KeyEvent keyEvent) {
-        return false;
+    public void onDestroy() {
+        super.onDestroy();
+        if (mDisposables != null) {
+            mDisposables.dispose();
+        }
+        screenSend.destroy();
+        Timber.d("OnDestroy KB");
+    }
+
+    public void addOnUpdateDelegatedListener(OnUpdateDelegatedListener listener) {
+        mOnUpdateDelegatedListener.add(listener);
     }
 
     private void setBalance(BigDecimal value) {
         balance.setText(bdHuman(value));
-        balanceAvailable.setText(getString(R.string.balance_available, bdHuman(value), MinterSDK.DEFAULT_COIN));
+
     }
 
     private void setDelegatedBalance(BigDecimal delegatedBalance) {
@@ -160,10 +219,17 @@ public class MonkeKeyboard extends InputMethodService implements KeyboardView.On
 
     private void onClickWallet(View view) {
         // start app
+        InputConnection inputConnection = getCurrentInputConnection();
+        mAccount.executeIfPresent(item -> {
+            inputConnection.commitText(item.getAddress().toString(), 0);
+        });
     }
 
-    private void onClickAmount(View view) {
-        Timber.d("OnClickSomething");
-        keyboardHex.setVisibility(View.VISIBLE);
+    public interface OnUpdateAccountListener {
+        void onUpdate(AddressAccount account);
+    }
+
+    public interface OnUpdateDelegatedListener {
+        void onUpdate(ExpResult<List<DelegationInfo>> result);
     }
 }

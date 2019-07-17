@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keypad_hex"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,7 +10,6 @@
     android:paddingTop="@dimen/margin_edges_half"
     android:paddingEnd="@dimen/margin_edges_half"
     android:paddingBottom="@dimen/margin_edges_half"
-    tools:background="@color/greyBackground"
     >
 
     <LinearLayout
@@ -216,8 +214,11 @@
         android:layout_marginEnd="@dimen/margin_edges_medium"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tag="backspace"
         android:src="@drawable/ic_backspace_white"
-        android:tint="#4a5b64"
+        android:tint="?attr/mon_textColorSecondary"
         app:layout_constraintBottom_toBottomOf="@id/letter_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"

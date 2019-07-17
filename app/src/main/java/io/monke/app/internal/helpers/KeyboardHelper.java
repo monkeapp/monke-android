@@ -9,6 +9,12 @@ import androidx.fragment.app.Fragment;
 
 public class KeyboardHelper {
 
+    public static void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null)
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     public static void hideKeyboard(Fragment fragment) {
         View view = fragment.getView();
         if (view != null) {

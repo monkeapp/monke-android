@@ -93,6 +93,7 @@ public class AccountItem implements Serializable, Cloneable {
     }
 
     @Override
+    @NonNull
     public String toString() {
         return String.format("AccountItem{address=%s, coin=%s, amount=%s}", address, coin, balance.toPlainString());
     }

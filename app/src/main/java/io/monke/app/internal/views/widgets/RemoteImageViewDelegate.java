@@ -52,8 +52,10 @@ final class RemoteImageViewDelegate implements RemoteImageView {
 
     RemoteImageViewDelegate(ImageView imageView) {
         mImage = new WeakReference<>(imageView);
-        final ActivityManager am = ((ActivityManager) getContext().getSystemService(ACTIVITY_SERVICE));
-        mIsLowRamDevice = am.isLowRamDevice();
+        if (!mImage.get().isInEditMode()) {
+            final ActivityManager am = ((ActivityManager) getContext().getSystemService(ACTIVITY_SERVICE));
+            mIsLowRamDevice = am.isLowRamDevice();
+        }
     }
 
     @Override

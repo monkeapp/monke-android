@@ -43,21 +43,25 @@ android {
         netMain {
             dimension "env"
             applicationId = "io.monke.app"
+            buildConfigField "String", "BANANA_COIN", '"BANANA"'
         }
 
         netMainNoCrashlytics {
             dimension "env"
             applicationId = "io.monke.app"
+            buildConfigField "String", "BANANA_COIN", '"BANANA"'
         }
 
         netTest {
             dimension "env"
-            applicationId = "io.monke.app.testnet"
+            applicationId = "io.monke.app"
+            buildConfigField "String", "BANANA_COIN", '"BANANATEST"'
         }
 
         netTestNoCrashlytics {
             dimension "env"
-            applicationId = "io.monke.app.testnet"
+            applicationId = "io.monke.app"
+            buildConfigField "String", "BANANA_COIN", '"BANANATEST"'
         }
     }
 }
@@ -93,12 +97,14 @@ dependencies {
     implementation 'androidx.core:core:1.2.0-alpha02'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.preference:preference:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha08'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0-rc01'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
+    implementation 'com.google.android:flexbox:1.1.0'
 
     //qr
     implementation 'com.google.zxing:core:3.3.3'

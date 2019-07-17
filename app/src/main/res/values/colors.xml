@@ -29,7 +29,8 @@
     <color name="colorPrimary">#5124c5</color>
     <color name="colorPrimaryDarker">#411D9E</color>
     <color name="colorPrimaryHalf">#60502EC2</color>
-    <color name="ic_launcher_background">@color/colorPrimary</color>
+
+    <color name="errorField">#33c524a2</color>
 
     <color name="colorPrimaryFocused">#19502EC2</color>
     <color name="colorPrimaryPressed">#33502EC2</color>
@@ -60,4 +61,12 @@
     <color name="colorInactive">#929292</color>
     <color name="colorInactive2">#60000000</color>
     <color name="warning_bg">#F13C3C</color>
+
+
+    <color name="light_background">#eceff0</color>
+    <color name="light_inputBackground">@color/white</color>
+
+    <color name="dark_inputBackground">#3d484d</color>
+    <color name="dark_background">#21272b</color>
+    <color name="dark_textSecondary">#a0a5a8</color>
 </resources>

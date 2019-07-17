@@ -40,6 +40,7 @@ import io.monke.app.internal.data.data.CachedEntity;
 import io.monke.app.internal.storage.KVStorage;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
+import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.explorer.repo.ExplorerAddressRepository;
 
@@ -47,7 +48,7 @@ import network.minter.explorer.repo.ExplorerAddressRepository;
  * minter-android-wallet. 2018
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public class AccountStorage implements CachedEntity<UserAccount> {
+public class AccountStorage implements CachedEntity<AddressAccount> {
     private final static String KEY_BALANCE = "account_storage_balance";
     private final ExplorerAddressRepository mExpAddressRepo;
     private final SecretStorage mSecretStorage;
@@ -87,11 +88,12 @@ public class AccountStorage implements CachedEntity<UserAccount> {
     }
 
     /**
-     * Group AccountItems's (inside UserAccount) by coin, but reduces MinterAddress (it will be null after grouping)
+     * Group AccountItems's (inside AddressAccount) by coin, but reduces MinterAddress (it will be null after grouping)
      * Map does not changes original data
      * @return RxJava2 function
      */
-    public static Function<UserAccount, UserAccount> groupAccountByCoin() {
+    @SuppressWarnings("ConstantConditions")
+    public static Function<AddressAccount, AddressAccount> groupAccountByCoin() {
         return items -> {
             List<AccountItem> in = new ArrayList<>(items.size());
             Stream.of(items.getAccountsItems()).forEach(item -> in.add(new AccountItem(item)));
@@ -109,7 +111,7 @@ public class AccountStorage implements CachedEntity<UserAccount> {
             Stream.of(tmp.values())
                     .forEach(out::add);
 
-            return new UserAccount(out);
+            return new AddressAccount(out);
         };
     }
 
@@ -117,6 +119,7 @@ public class AccountStorage implements CachedEntity<UserAccount> {
      * Group AccountItems's by coin, but reduces MinterAddress (it will be null after grouping)
      * @return RxJava2 function
      */
+    @SuppressWarnings("ConstantConditions")
     public static Function<List<AccountItem>, List<AccountItem>> groupAccountItemsByCoin() {
         return items -> {
             List<AccountItem> in = new ArrayList<>(items.size());
@@ -139,29 +142,39 @@ public class AccountStorage implements CachedEntity<UserAccount> {
         };
     }
 
+    public AddressAccount getData() {
+        return initialData();
+    }
+
     @Override
-    public UserAccount initialData() {
+    public AddressAccount initialData() {
         if (mStorage.contains(KEY_BALANCE)) {
-            return mStorage.get(KEY_BALANCE);
+            AddressAccount item = mStorage.get(KEY_BALANCE);
+            if (item != null) {
+                return item;
+            }
+
+            mStorage.delete(KEY_BALANCE);
         }
 
-        return new UserAccount(Collections.emptyList());
+        AccountItem def = new AccountItem(MinterSDK.DEFAULT_COIN, mSecretStorage.getAddresses().get(0), BigDecimal.ZERO);
+        return new AddressAccount(Collections.singletonList(def));
     }
 
     public List<AccountItem> getAccountItems() {
         if (mStorage.contains(KEY_BALANCE)) {
-            return mStorage.<UserAccount>get(KEY_BALANCE).getAccountsItems();
+            return mStorage.<AddressAccount>get(KEY_BALANCE).getAccountsItems();
         }
 
         return Collections.emptyList();
     }
 
-    public UserAccount getAccount() {
+    public AddressAccount getAccount() {
         return initialData();
     }
 
     @Override
-    public void onAfterUpdate(UserAccount result) {
+    public void onAfterUpdate(AddressAccount result) {
         mStorage.put(KEY_BALANCE, result);
     }
 
@@ -171,10 +184,10 @@ public class AccountStorage implements CachedEntity<UserAccount> {
     }
 
     @Override
-    public Observable<UserAccount> getUpdatableData() {
+    public Observable<AddressAccount> getUpdatableData() {
         return ExplorerBalanceFetcher
                 .create(mExpAddressRepo, mSecretStorage.getAddresses())
-                .map(UserAccount::new);
+                .map(AddressAccount::new);
     }
 
 }

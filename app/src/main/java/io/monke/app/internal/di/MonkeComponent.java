@@ -47,8 +47,8 @@ import io.monke.app.internal.helpers.ImageHelper;
 import io.monke.app.internal.helpers.NetworkHelper;
 import io.monke.app.internal.storage.KVStorage;
 import io.monke.app.storage.AccountStorage;
+import io.monke.app.storage.AddressAccount;
 import io.monke.app.storage.SecretStorage;
-import io.monke.app.storage.UserAccount;
 import network.minter.blockchain.repo.BlockChainAccountRepository;
 import network.minter.blockchain.repo.BlockChainBlockRepository;
 import network.minter.blockchain.repo.BlockChainCoinRepository;
@@ -107,7 +107,7 @@ public interface MonkeComponent {
     // local
     SecretStorage secretStorage();
     AccountStorage accountStorage();
-    CachedRepository<UserAccount, AccountStorage> accountStorageCache();
+    CachedRepository<AddressAccount, AccountStorage> accountStorageCache();
     CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> explorerTransactionsRepoCache();
     CachedRepository<ExpResult<List<DelegationInfo>>, CachedExplorerAddressRepository> explorerAddressRepoCache();
 

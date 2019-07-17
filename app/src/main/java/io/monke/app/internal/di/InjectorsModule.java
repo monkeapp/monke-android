@@ -32,6 +32,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 import io.monke.app.ime.MonkeKeyboard;
 import io.monke.app.internal.di.annotations.ActivityScope;
 import io.monke.app.internal.di.annotations.ServiceScope;
+import io.monke.app.settings.ui.SettingsActivity;
 import io.monke.app.setup.ui.SetupActivity;
 import io.monke.app.splash.ui.SplashActivity;
 
@@ -53,5 +54,9 @@ public interface InjectorsModule {
     @ContributesAndroidInjector
     @ServiceScope
     MonkeKeyboard monkeKeyboardInjector();
+
+    @ContributesAndroidInjector
+    @ActivityScope
+    SettingsActivity settingsActivityInjector();
 
 }

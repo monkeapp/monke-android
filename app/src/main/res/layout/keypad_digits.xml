@@ -2,14 +2,13 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keypad_digits"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:background="@color/greyBackground">
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/kp_row_0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
@@ -42,6 +41,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/kp_row_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
@@ -71,6 +71,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/kp_row_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
@@ -100,6 +101,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/kp_row_3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
@@ -111,7 +113,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text=","/>
+            android:tag="."
+            android:text=","
+            />
 
         <TextView
             style="@style/KB_NumKey"
@@ -121,13 +125,14 @@
             android:text="0"/>
 
         <ImageView
+            android:tag="backspace"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="4dp"
             android:src="@drawable/ic_backspace_white"
-            android:tint="#4a5b64"/>
+            android:tint="?mon_textColorSecondary"/>
     </LinearLayout>
 
     <Space

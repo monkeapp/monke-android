@@ -541,8 +541,6 @@ public final class ImageHelper {
 
             outStream.flush();
             outStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -552,16 +550,13 @@ public final class ImageHelper {
         Bitmap bitmap;
         try {
             bitmap = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-        } catch (OutOfMemoryError e) {
+        } catch (OutOfMemoryError | Exception e) {
             e.printStackTrace();
 //            @SuppressLint("ResourceType") InputStream is = mContext.getResources().openRawResource(R.drawable.img_default_avatar);
 //            bitmap = BitmapFactory.decodeStream(is);
             bitmap = null;
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-            bitmap = null;
-        }
+        } // TODO: handle exception
+
 
         return bitmap;//BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         //return decodeFile(image);

@@ -30,11 +30,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="54dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:minHeight="54dp"
     >
 
     <io.monke.app.internal.views.widgets.BipCircleImageView
@@ -60,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_min"
         android:layout_marginEnd="@dimen/margin_min"
-        android:fontFamily="@font/_ubuntu_medium"
+        android:textStyle="bold"
         android:textSize="@dimen/text_size_default"
         app:layout_constraintBottom_toTopOf="@id/item_subtitle"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +75,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_min"
         android:layout_marginEnd="@dimen/margin_edges"
-        android:fontFamily="@font/_ubuntu_medium"
         android:textColor="@color/textColorGrey"
         android:textSize="@dimen/text_size_12"
         android:visibility="gone"

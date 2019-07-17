@@ -15,4 +15,39 @@
     <string name="hint_address">Address</string>
 
     <string name="balance_available" formatted="false">Available %s %s</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_deposit">Deposit</string>
+    <string name="btn_copy_address_clipboard">Copy address to clipboard</string>
+    <string name="btn_copy">Copy to clipboard</string>
+    <string name="btn_done">Done</string>
+
+    <string name="settings_backup_mnemonic">🔑 Backup Phrase</string>
+    <string name="settings_report_problem">Report 🙈 problem</string>
+    <string name="settings_rate_app">Rate Monke 💜 in Play Market</string>
+    <string name="settings_make_donation_title">Make a 🍩 donation</string>
+    <string name="settings_make_donation_desc">We spend everything on development</string>
+    <string name="settings_buy_banana_title">Buy 🍌 Banana</string>
+    <string name="settings_buy_banana_desc">Use coins to reduce transaction fees</string>
+    <string name="settings_telegram_ch_title">Telegram channel</string>
+    <string name="settings_telegram_ch_desc">Updated and announcements from Monke</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_about_desc">Monke.io</string>
+
+    <string name="deposit_title"><![CDATA[Send some money to your <font color=#5124c5>Monke</font>]]></string>
+    <string name="deposit_field_address">Use this address</string>
+
+    <string name="title_backup">Backup Phrase</string>
+    <string name="backup_description">Please <![CDATA[<b>write these 12 words down in order,</b>]]> and keep them somewhere safe offline.\n\nBackup Phrase allows you get access to funds of your Monke</string>
+    <string name="btn_close">Close</string>
+
+    <string-array name="share_titles">
+        <item>💸Sent</item>
+        <item>Shut up and take my money!</item>
+        <item>Dollar dollar bill y\'al</item>
+        <item>No money, no honey 🍯</item>
+        <item>👍 Thnx</item>
+        <!--        <item>👍🔗 %s</item>-->
+    </string-array>
+    <string name="share_title_tx">🔗 %s</string>
 </resources>

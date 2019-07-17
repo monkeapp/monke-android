@@ -5,6 +5,7 @@
     <subtype
         android:imeSubtypeLocale="en_US"
         android:imeSubtypeMode="keyboard"
+        android:settingsActivity=".settings.ui.SettingsActivity"
         android:label="Default"/>
 
 </input-method>
