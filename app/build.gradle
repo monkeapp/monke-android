@@ -1,19 +1,8 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 apply plugin: 'com.android.application'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
 apply plugin: 'io.fabric'
+
+Properties localProps = new Properties()
+localProps.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     compileSdkVersion minterMaxSdk
@@ -25,6 +14,15 @@ android {
         versionCode appVersionCode
         versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        config {
+            keyAlias localProps['app_key_alias']
+            keyPassword localProps['app_key_password']
+            storeFile file(localProps['app_key_store_file'])
+            storePassword localProps['app_key_store_password']
+        }
     }
 
     lintOptions {
