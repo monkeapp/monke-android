@@ -31,8 +31,12 @@ import dagger.android.ContributesAndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
 import io.monke.app.ime.MonkeKeyboard;
 import io.monke.app.internal.di.annotations.ActivityScope;
+import io.monke.app.internal.di.annotations.FragmentScope;
 import io.monke.app.internal.di.annotations.ServiceScope;
+import io.monke.app.settings.ui.BackupSeedActivity;
 import io.monke.app.settings.ui.SettingsActivity;
+import io.monke.app.settings.ui.SettingsFragment;
+import io.monke.app.setup.ui.DepositBottomDialog;
 import io.monke.app.setup.ui.SetupActivity;
 import io.monke.app.splash.ui.SplashActivity;
 
@@ -59,4 +63,16 @@ public interface InjectorsModule {
     @ActivityScope
     SettingsActivity settingsActivityInjector();
 
+
+    @ContributesAndroidInjector
+    @FragmentScope
+    DepositBottomDialog depositFragmentInjector();
+
+    @ContributesAndroidInjector
+    @FragmentScope
+    SettingsFragment settingsFragmentInjector();
+
+    @ContributesAndroidInjector
+    @ActivityScope
+    BackupSeedActivity backupSeedActivityInjector();
 }

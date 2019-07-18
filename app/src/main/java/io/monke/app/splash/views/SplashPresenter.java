@@ -39,11 +39,16 @@ public class SplashPresenter extends MvpBasePresenter<SplashView> {
             return;
         }
 
-        Observable.timer(1, TimeUnit.SECONDS)
+        Observable.timer(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(res -> {
-                    getViewState().startSetup();
+                    if (prefs.getInt(PrefKeys.SETUP_LAST_STEP, 1) >= 3) {
+                        getViewState().startSettings();
+                    } else {
+                        getViewState().startSetup();
+                    }
+
                 });
 
 

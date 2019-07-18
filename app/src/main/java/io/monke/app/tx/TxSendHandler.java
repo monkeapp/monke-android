@@ -237,6 +237,7 @@ public class TxSendHandler extends TxHandler {
                 bdMax(BigDecimal.ZERO, BigDecimal.ONE.subtract(bananaBalance))
         );
 
+
         Timber.d("To sell coins and buy banana: %s", bdHuman(toSell));
 
 

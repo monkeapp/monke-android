@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges"
         android:descendantFocusability="beforeDescendants"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="?attr/mon_inputBackground"
         app:cardCornerRadius="2dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
@@ -128,13 +128,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:visibility="gone"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 />
 
             <EditText
                 android:id="@+id/dummy_input"
                 android:layout_width="0dp"
-
                 android:layout_height="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -147,6 +146,7 @@
                 android:layout_width="0dp"
                 android:layout_height="44dp"
                 android:layout_marginStart="4dp"
+                android:textSize="@dimen/text_size_default"
                 android:layout_marginEnd="@dimen/margin_edges_half"
                 android:fontFamily="@string/font_medium"
                 android:hint="ADDRESS"
@@ -159,7 +159,7 @@
                 android:tag="address"
                 android:textColor="?attr/mon_textColorPrimary"
                 android:textColorHint="?android:attr/textColorHint"
-                android:textSize="@dimen/text_size_12"
+                app:layout_goneMarginStart="@dimen/margin_edges_half"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/action_copy"
                 app:layout_constraintStart_toEndOf="@id/address_icon"
@@ -440,10 +440,11 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Space
+        android:layout_marginTop="4dp"
         android:id="@+id/bottom_space"
         android:layout_width="0dp"
         android:layout_height="@dimen/margin_edges_half"
-        android:layout_marginTop="@dimen/margin_edges_half"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/error_container"

@@ -34,28 +34,28 @@
             <item android:state_enabled="false">
                 <shape android:shape="rectangle">
                     <corners android:radius="@dimen/btn_border_radius"/>
-                    <solid android:color="@color/btn_disabled2"/>
+                    <solid android:color="?attr/mon_buttonColorDisabled"/>
                 </shape>
             </item>
 
             <item android:state_focused="true">
                 <shape android:shape="rectangle">
                     <corners android:radius="@dimen/btn_border_radius"/>
-                    <solid android:color="#6142C7"/>
+                    <solid android:color="?attr/mon_buttonColorFocused"/>
                 </shape>
             </item>
 
             <item android:state_hovered="true">
                 <shape android:shape="rectangle">
                     <corners android:radius="@dimen/btn_border_radius"/>
-                    <solid android:color="#6142C7"/>
+                    <solid android:color="?attr/mon_buttonColorHovered"/>
                 </shape>
             </item>
 
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="@dimen/btn_border_radius"/>
-                    <solid android:color="@color/colorPrimary"/>
+                    <solid android:color="?attr/mon_buttonColorDefault"/>
                 </shape>
             </item>
         </selector>

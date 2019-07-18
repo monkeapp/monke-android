@@ -3,5 +3,13 @@
     <attr name="mon_textColorPrimary" format="reference"/>
     <attr name="mon_textColorSecondary" format="reference"/>
     <attr name="mon_inputBackground" format="reference"/>
+    <attr name="mon_inputBackgroundError" format="reference"/>
     <attr name="mon_iconTint" format="reference"/>
+
+    <attr name="mon_buttonColorDefault" format="reference"/>
+    <attr name="mon_buttonColorHovered" format="reference"/>
+    <attr name="mon_buttonColorFocused" format="reference"/>
+    <attr name="mon_buttonColorDisabled" format="reference"/>
+
+    <attr name="mon_sent_share_title" format="reference"/>
 </resources>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content"
+                                                   android:background="@color/white"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_edges"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_edges"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="@dimen/margin_edges_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_edges"
+        android:text="Send some money to your Monke"
+        android:textSize="@dimen/text_size_28"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/qr"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toTopOf="@id/guide_margin_top"/>
+
+    <ImageView
+        android:id="@+id/qr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_edges"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintTop_toTopOf="@id/guide_margin_top"
+        app:layout_constraintWidth_percent=".39"
+        tools:src="@drawable/img_big_banana"/>
+
+    <TextView
+        android:id="@+id/address_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_medium"
+        android:text="@string/deposit_field_address"
+        android:textColor="#8a000000"
+        android:textSize="@dimen/text_size_12"
+        app:layout_constraintBottom_toTopOf="@id/address_text_container"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"/>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/address_text_container"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="@dimen/margin_edges_medium"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:focusable="true"
+        android:paddingBottom="4dp"
+        app:cardBackgroundColor="?attr/mon_inputBackground"
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/qr"
+        >
+
+        <TextView
+            android:id="@+id/address_text"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="?attr/mon_inputBackground"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:paddingStart="@dimen/margin_edges_half"
+            android:paddingEnd="@dimen/margin_edges_half"
+            android:textColor="?attr/mon_textColorPrimary"
+            android:textSize="@dimen/text_size_14"
+            tools:text="Mx5832afb50c505b6b2bd40351996aea0b5b5eae8e"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <io.monke.app.internal.views.widgets.WalletButton
+        android:id="@+id/button_copy"
+        style="@style/Wallet.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:text="@string/btn_copy_address_clipboard"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/address_text_container"/>
+
+    <TextView
+        android:id="@+id/button_done"
+        style="@style/Wallet.Button.Borderless"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:text="@string/btn_done"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/button_copy"/>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="@dimen/margin_edges_half"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/button_done"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

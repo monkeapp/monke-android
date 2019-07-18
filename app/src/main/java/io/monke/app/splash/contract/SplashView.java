@@ -4,4 +4,5 @@ import moxy.MvpView;
 
 public interface SplashView extends MvpView {
     void startSetup();
+    void startSettings();
 }

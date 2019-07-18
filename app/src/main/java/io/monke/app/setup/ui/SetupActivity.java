@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.monke.app.R;
 import io.monke.app.internal.BaseMvpInjectActivity;
+import io.monke.app.settings.ui.SettingsActivity;
 import io.monke.app.setup.adapters.SetupAdapter;
 import io.monke.app.setup.contract.SetupView;
 import io.monke.app.setup.views.SetupPresenter;
@@ -25,6 +26,7 @@ public class SetupActivity extends BaseMvpInjectActivity implements SetupView {
 
     @Inject Provider<SetupPresenter> presenterProvider;
     @InjectPresenter SetupPresenter presenter;
+    private DepositBottomDialog mDepositDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,13 +39,23 @@ public class SetupActivity extends BaseMvpInjectActivity implements SetupView {
     public void setAdapter(SetupAdapter adapter) {
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(adapter);
-//        list.post(()-> adapter.expand(0));
     }
 
     @Override
     public void startSystemKeyboardSettings(int requestCode) {
         startActivityForResult(
                 new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS), requestCode);
+    }
+
+    @Override
+    public void startSettings() {
+        startActivityClearTop(this, SettingsActivity.class);
+    }
+
+    @Override
+    public void showDepositDialog() {
+        mDepositDialog = new DepositBottomDialog();
+        mDepositDialog.show(getSupportFragmentManager(), null);
     }
 
     @ProvidePresenter

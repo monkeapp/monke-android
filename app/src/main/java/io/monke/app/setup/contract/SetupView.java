@@ -8,4 +8,6 @@ public interface SetupView extends MvpView {
     void setAdapter(SetupAdapter adapter);
     void startSystemKeyboardSettings(int requestCode);
     void finish();
+    void startSettings();
+    void showDepositDialog();
 }

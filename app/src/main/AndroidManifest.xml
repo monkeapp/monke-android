@@ -3,6 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="io.monke.app">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".internal.Monke"
         android:allowBackup="false"
@@ -12,6 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Wallet"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b9062f55ec5f4b4a7a4d7e9e2058d75026231947"
+            />
+
         <activity
             android:name=".setup.ui.SetupActivity"
             android:screenOrientation="portrait"
@@ -28,6 +36,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".settings.ui.SettingsActivity"/>
+        <activity android:name=".settings.ui.BackupSeedActivity"/>
 
         <service
             android:name=".ime.MonkeKeyboard"

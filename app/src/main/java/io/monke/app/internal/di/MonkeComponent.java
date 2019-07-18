@@ -97,6 +97,8 @@ public interface MonkeComponent {
     NetworkHelper network();
     ImageHelper image();
     SharedPreferences prefs();
+    @Named("default")
+    SharedPreferences prefsDefault();
     GsonBuilder gsonBuilder();
 
     FingerprintHelper fingerprint();

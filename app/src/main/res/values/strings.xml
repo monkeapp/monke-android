@@ -38,7 +38,7 @@
     <string name="deposit_field_address">Use this address</string>
 
     <string name="title_backup">Backup Phrase</string>
-    <string name="backup_description">Please <![CDATA[<b>write these 12 words down in order,</b>]]> and keep them somewhere safe offline.\n\nBackup Phrase allows you get access to funds of your Monke</string>
+    <string name="backup_description"><![CDATA[Please <b>write these 12 words down in order,</b> and keep them somewhere safe offline.<br/><br/>Backup Phrase allows you get access to funds of your Monke]]></string>
     <string name="btn_close">Close</string>
 
     <string-array name="share_titles">
@@ -50,4 +50,7 @@
         <!--        <item>👍🔗 %s</item>-->
     </string-array>
     <string name="share_title_tx">🔗 %s</string>
+
+    <string name="sent_share_title_light"><![CDATA[<font color=#5124C5>Monke Sent!</font> <font color=#50555C>Share:</font>]]></string>
+    <string name="sent_share_title_dark"><![CDATA[<font color=#ffffff>Monke Sent!</font> <font color=#ACB4BE>Share:</font>]]></string>
 </resources>

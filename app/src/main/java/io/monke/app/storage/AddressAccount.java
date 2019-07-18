@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import network.minter.core.crypto.MinterAddress;
+
 import static com.google.common.base.MoreObjects.firstNonNull;
 
 
@@ -128,8 +130,18 @@ public class AddressAccount implements Serializable, Cloneable {
                 .findFirst();
     }
 
-    public Optional<AccountItem> findByCoin(String coin) {
-        return Stream.of(getAccountsItems()).filter(item -> item.coin.toLowerCase().equals(coin.toLowerCase())).findFirst();
+    public AccountItem findByCoin(String coin, MinterAddress defAccAddress) {
+        Optional<AccountItem> account = Stream.of(getAccountsItems()).filter(item -> item.coin.toLowerCase().equals(coin.toLowerCase())).findFirst();
+        if (!account.isPresent()) {
+            return new AccountItem(coin, defAccAddress, BigDecimal.ZERO);
+        }
+
+        return account.get();
+    }
+
+    public AccountItem findByCoin(String coin) {
+        Optional<AccountItem> account = Stream.of(getAccountsItems()).filter(item -> item.coin.toLowerCase().equals(coin.toLowerCase())).findFirst();
+        return account.isPresent() ? account.get() : null;
     }
 
     public AccountItem getFirstAccountItem() {

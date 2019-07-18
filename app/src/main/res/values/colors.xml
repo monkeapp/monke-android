@@ -69,4 +69,9 @@
     <color name="dark_inputBackground">#3d484d</color>
     <color name="dark_background">#21272b</color>
     <color name="dark_textSecondary">#a0a5a8</color>
+
+    <color name="buttonColorDefault">@color/colorPrimary</color>
+    <color name="buttonColorHovered">#6142C7</color>
+    <color name="buttonColorFocused">#6142C7</color>
+    <color name="buttonColorDisabled">@color/btn_disabled2</color>
 </resources>

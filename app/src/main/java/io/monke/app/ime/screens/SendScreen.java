@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputConnection;
@@ -39,7 +40,9 @@ import io.monke.app.ime.screens.share.ShareListAdapter;
 import io.monke.app.internal.forms.DecimalInputFilter;
 import io.monke.app.internal.forms.InputGroup;
 import io.monke.app.internal.forms.validators.RegexValidator;
+import io.monke.app.internal.helpers.HtmlCompat;
 import io.monke.app.internal.helpers.MathHelper;
+import io.monke.app.internal.helpers.ViewHelper;
 import io.monke.app.internal.views.widgets.BipCircleImageView;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AddressAccount;
@@ -76,6 +79,7 @@ public class SendScreen extends BaseScreen {
     @BindView(R.id.input_coin) EditText inputCoin;
     @BindView(R.id.dummy_input) EditText dummyInput;
     @BindView(R.id.address_icon) BipCircleImageView addressIcon;
+    @BindView(R.id.share_title) TextView shareTitle;
 
     @Inject TxSendHandler tx;
 
@@ -101,11 +105,17 @@ public class SendScreen extends BaseScreen {
 
     }
 
+    private int mOkInputColor;
+    private int mErrorInputColor;
+
     @Override
     protected void onInit(MonkeKeyboard keyboard, View rootView) {
         super.onInit(keyboard, rootView);
         keyboard.addOnUpdateAccountListener(this::onUpdateAccount);
         tx.init(keyboard.getAccount());
+
+        mOkInputColor = ViewHelper.getResColorFromStyle(getKeyboard(), R.attr.mon_inputBackground);
+        mErrorInputColor = ViewHelper.getResColorFromStyle(getKeyboard(), R.attr.mon_inputBackgroundError);
 
         setAvailable(BigDecimal.ZERO);
 
@@ -187,7 +197,7 @@ public class SendScreen extends BaseScreen {
         mInputGroup.addInput(inputAmount);
         mInputGroup.addInput(inputAddress);
         mInputGroup.addValidator(inputAmount, new RegexValidator("^(\\d*)(\\.)?(\\d{1,18})$", "Invalid number", false));
-        mInputGroup.addValidator(inputAddress, new RegexValidator(MinterAddress.ADDRESS_PATTERN, false));
+        mInputGroup.addValidator(inputAddress, new RegexValidator(MinterAddress.ADDRESS_PATTERN, "Invalid address", false));
         mInputGroup.addFilter(inputAmount, new DecimalInputFilter(() -> inputAmount));
         mInputGroup.addFormValidateListener(valid -> {
             mFormValid = valid;
@@ -204,31 +214,45 @@ public class SendScreen extends BaseScreen {
         });
         mInputGroup.addTextChangedListener((editText, valid) -> {
             View parent = (View) editText.getParent();
+
             if (!valid) {
-                parent.setBackgroundColor(getResources().getColor(R.color.errorField));
+                parent.setBackgroundColor(mErrorInputColor);
             } else {
-                parent.setBackgroundColor(getResources().getColor(R.color.white));
+                parent.setBackgroundColor(mOkInputColor);
             }
 
             if (editText.getId() == R.id.input_address && !valid) {
                 addressIcon.setVisibility(View.GONE);
             }
 
-            if (!valid || editText.getText().length() == 0) return;
+            String val = editText.getText().toString();
+
+            if (editText.getId() == R.id.input_address) {
+                if (val.isEmpty()) {
+                    float dimen = getResources().getDimension(R.dimen.text_size_default);
+                    editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, dimen);
+                } else {
+                    float dimen = getResources().getDimension(R.dimen.text_size_12);
+                    editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, dimen);
+                }
+            }
+
+
+            if (!valid || val.isEmpty()) return;
 
             switch (editText.getId()) {
                 case R.id.input_amount:
-                    BigDecimal amount = MathHelper.bigDecimalFromString(editText.getText().toString());
+                    BigDecimal amount = MathHelper.bigDecimalFromString(val);
                     if (bdNull(amount)) {
                         mInputGroup.setError("amount", "Can't be 0");
-                        parent.setBackgroundColor(getResources().getColor(R.color.errorField));
+                        parent.setBackgroundColor(mErrorInputColor);
                         break;
                     } else if (bdGT(amount, tx.getAccount().get().getBalance())) {
                         mInputGroup.setError("amount", "Not enough balance");
-                        parent.setBackgroundColor(getResources().getColor(R.color.errorField));
+                        parent.setBackgroundColor(mErrorInputColor);
                         break;
                     } else {
-                        parent.setBackgroundColor(getResources().getColor(R.color.white));
+                        parent.setBackgroundColor(mOkInputColor);
                         mInputGroup.setError("amount", null);
                     }
 
@@ -236,7 +260,8 @@ public class SendScreen extends BaseScreen {
                     break;
 
                 case R.id.input_address:
-                    tx.setRecipient(new MinterAddress(editText.getText().toString()));
+
+                    tx.setRecipient(new MinterAddress(val));
                     addressIcon.setImageUrl(MinterProfileApi.getUserAvatarUrlByAddress(tx.getRecipient()));
                     addressIcon.setVisibility(View.VISIBLE);
                     break;
@@ -270,11 +295,12 @@ public class SendScreen extends BaseScreen {
             return;
         }
 
-//        tx.buyBanana(tx.getAmount(), getKeyboard().getBananaAccount().get().getBalance());
+        tx.buyBanana(tx.getAmount(), getKeyboard().getBananaAccount().get().getBalance());
 
         getKeyboard().showProgress(false);
         mInputGroup.clearFields();
         mInputGroup.clearErrors();
+        addressIcon.setVisibility(View.GONE);
 
 
         final String[] shareTitles = getResources().getStringArray(R.array.share_titles);
@@ -284,6 +310,9 @@ public class SendScreen extends BaseScreen {
                 getResources().getString(R.string.share_title_tx, result.result.txHash.toShortString()),
                 MinterExplorerApi.newFrontUrl().addPathSegment("transaction").addPathSegment(result.result.txHash.toString()).toString()
         ));
+
+        int stringResTitle = ViewHelper.getResFromStyle(getKeyboard(), R.attr.mon_sent_share_title);
+        shareTitle.setText(HtmlCompat.fromHtml(getKeyboard().getString(stringResTitle)));
 
         mShareListAdapter.setItems(shareItems);
         mShareListAdapter.notifyDataSetChanged();

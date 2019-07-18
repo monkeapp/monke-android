@@ -1,12 +1,12 @@
 package io.monke.app.ime;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 import android.widget.TextView;
 
-import com.annimon.stream.Optional;
 import com.annimon.stream.Stream;
 
 import java.math.BigDecimal;
@@ -16,6 +16,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.preference.PreferenceManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
@@ -23,6 +24,7 @@ import io.monke.app.BuildConfig;
 import io.monke.app.R;
 import io.monke.app.apis.explorer.CachedExplorerAddressRepository;
 import io.monke.app.ime.screens.SendScreen;
+import io.monke.app.internal.PrefKeys;
 import io.monke.app.internal.common.Lazy;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.internal.helpers.ViewHelper;
@@ -62,8 +64,8 @@ public class MonkeKeyboard extends InputMethodService {
     CachedRepository<ExpResult<List<DelegationInfo>>, CachedExplorerAddressRepository> expAddressRepo;
     @Inject SendScreen screenSend;
     private ConstraintLayout mKeyboard;
-    private Optional<AccountItem> mAccount;
-    private Optional<AccountItem> mBananaAccount;
+    private AccountItem mAccount;
+    private AccountItem mBananaAccount;
     private MinterAddress mAddress;
     private CompositeDisposable mDisposables = new CompositeDisposable();
     private List<OnUpdateAccountListener> mOnUpdateAccountListeners = new ArrayList<>(3);
@@ -80,7 +82,8 @@ public class MonkeKeyboard extends InputMethodService {
 
     @Override
     public void onCreate() {
-        setTheme(R.style.KB_Light);
+        final SharedPreferences defPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(defPrefs.getBoolean(PrefKeys.DAY_NIGHT_THEME, false) ? R.style.KB_Dark : R.style.KB_Light);
         super.onCreate();
         AndroidInjection.inject(this);
     }
@@ -99,11 +102,11 @@ public class MonkeKeyboard extends InputMethodService {
     }
 
     public Lazy<AccountItem> getAccount() {
-        return () -> mAccount.get();
+        return () -> mAccount;
     }
 
     public Lazy<AccountItem> getBananaAccount() {
-        return () -> mBananaAccount.get();
+        return () -> mBananaAccount;
     }
 
     public MinterAddress getAddress() {
@@ -125,6 +128,7 @@ public class MonkeKeyboard extends InputMethodService {
         ButterKnife.bind(this, mKeyboard);
         screenSend.init(this, mKeyboard);
 
+        mAddress = secretStorage.getAddresses().get(0);
 
         setBalance(BigDecimal.ZERO);
         setDelegatedBalance(BigDecimal.ZERO);
@@ -135,13 +139,9 @@ public class MonkeKeyboard extends InputMethodService {
             expAddressRepo.update(true);
         });
 
-        mAccount = accountStorage.getEntity().getData().findByCoin(MinterSDK.DEFAULT_COIN);
-        mBananaAccount = accountStorage.getEntity().getData().findByCoin(BuildConfig.BANANA_COIN).or(() -> {
-            AccountItem defAcc = new AccountItem(BuildConfig.BANANA_COIN, mAccount.get().getAddress(), BigDecimal.ZERO);
-            return Optional.of(defAcc);
-        });
+        mAccount = accountStorage.getEntity().getData().findByCoin(MinterSDK.DEFAULT_COIN, mAddress);
+        mBananaAccount = accountStorage.getEntity().getData().findByCoin(BuildConfig.BANANA_COIN, mAddress);
 
-        mAddress = secretStorage.getAddresses().get(0);
 
         walletAddress.setText(mAddress.toShortString());
         walletAddress.setOnClickListener(this::onClickWallet);
@@ -153,8 +153,8 @@ public class MonkeKeyboard extends InputMethodService {
                 .subscribe(res -> {
                     Timber.d("Loaded balance");
                     showProgress(false);
-                    mAccount = res.findByCoin(MinterSDK.DEFAULT_COIN);
-                    mBananaAccount = res.findByCoin(BuildConfig.BANANA_COIN);
+                    mAccount = res.findByCoin(MinterSDK.DEFAULT_COIN, mAddress);
+                    mBananaAccount = res.findByCoin(BuildConfig.BANANA_COIN, mAddress);
                     setBalance(res.getTotalBalance());
                     Stream.of(mOnUpdateAccountListeners).forEach(item -> item.onUpdate(res));
                 });
@@ -181,9 +181,9 @@ public class MonkeKeyboard extends InputMethodService {
             requestHideSelf(0);
         });
         buttonSwitchKeyboard.setOnClickListener(v -> {
-            startActivity(
-                    new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS)
-            );
+            Intent intent = new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         });
 
         return mKeyboard;
@@ -220,9 +220,7 @@ public class MonkeKeyboard extends InputMethodService {
     private void onClickWallet(View view) {
         // start app
         InputConnection inputConnection = getCurrentInputConnection();
-        mAccount.executeIfPresent(item -> {
-            inputConnection.commitText(item.getAddress().toString(), 0);
-        });
+        inputConnection.commitText(mAccount.getAddress().toString(), 0);
     }
 
     public interface OnUpdateAccountListener {

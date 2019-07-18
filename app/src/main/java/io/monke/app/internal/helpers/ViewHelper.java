@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.Nullable;
@@ -246,5 +247,16 @@ public final class ViewHelper {
     public static void setSelectableItemBackground(View view) {
         TypedValue outValue = new TypedValue();
         view.getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+    }
+
+    public static int getResColorFromStyle(Context context, @AttrRes int resId) {
+        int colorRes = getResFromStyle(context, resId);
+        return context.getResources().getColor(colorRes);
+    }
+
+    public static int getResFromStyle(Context context, @AttrRes int resId) {
+        TypedValue tv = new TypedValue();
+        context.getTheme().resolveAttribute(resId, tv, true);
+        return tv.resourceId;
     }
 }

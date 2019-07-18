@@ -34,6 +34,8 @@ import android.content.res.Resources;
 import android.os.Build;
 
 import com.annimon.stream.Stream;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.edwardstock.secp256k1.NativeSecp256k1;
 import com.fatboyindustrial.gsonjodatime.Converters;
 import com.google.gson.GsonBuilder;
@@ -50,8 +52,10 @@ import java.util.UUID;
 
 import javax.inject.Named;
 
+import androidx.preference.PreferenceManager;
 import dagger.Module;
 import dagger.Provides;
+import io.fabric.sdk.android.Fabric;
 import io.monke.app.BuildConfig;
 import io.monke.app.R;
 import io.monke.app.internal.Monke;
@@ -240,6 +244,12 @@ public class MonkeModule {
     }
 
     @Provides
+    @Named("default")
+    public SharedPreferences provideDefaultSharedPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
     public ApiService.Builder provideApiService(GsonBuilder gsonBuilder) {
         ApiService.Builder builder = new ApiService.Builder("", gsonBuilder);
 
@@ -254,8 +264,8 @@ public class MonkeModule {
     }
 
     private void initCrashlytics() {
-//		CrashlyticsCore core = new CrashlyticsCore.Builder().disabled(!mEnableExternalLog).build();
-//		Fabric.with(mContext, new Crashlytics.Builder().core(core).build());
+        CrashlyticsCore core = new CrashlyticsCore.Builder().disabled(!mEnableExternalLog).build();
+        Fabric.with(mContext, new Crashlytics.Builder().core(core).build());
     }
 }
 

@@ -37,6 +37,8 @@
         <item name="android:textColor">@color/textColorPrimary</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_14</item>
         <item name="android:textStyle">normal</item>
         <item name="android:colorBackground">@color/white</item>
@@ -46,6 +48,21 @@
         <!--<item name="borderlessButtonStyle">@style/Wallet.Button</item>-->
         <!--<item name="android:borderlessButtonStyle">@style/Wallet.Button</item>-->
         <item name="android:soundEffectsEnabled">false</item>
+
+
+        <!--        Theme specific-->
+        <item name="mon_textColorPrimary">@color/black</item>
+        <item name="mon_textColorSecondary">@color/black</item>
+        <item name="mon_inputBackground">@color/white</item>
+        <item name="mon_inputBackgroundError">@color/errorField</item>
+        <item name="mon_iconTint">@color/colorPrimary</item>
+
+        <item name="mon_buttonColorDefault">@color/buttonColorDefault</item>
+        <item name="mon_buttonColorHovered">@color/buttonColorHovered</item>
+        <item name="mon_buttonColorFocused">@color/buttonColorFocused</item>
+        <item name="mon_buttonColorDisabled">@color/buttonColorDisabled</item>
+
+        <item name="mon_sent_share_title">@string/sent_share_title_light</item>
     </style>
 
     <style name="Wallet.Hint" parent="TextAppearance.Design.Hint">

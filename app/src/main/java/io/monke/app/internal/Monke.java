@@ -15,6 +15,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import dagger.android.HasServiceInjector;
+import io.fabric.sdk.android.Fabric;
 import io.monke.app.BuildConfig;
 import io.monke.app.internal.di.DaggerMonkeComponent;
 import io.monke.app.internal.di.HelpersModule;
@@ -69,6 +70,7 @@ public class Monke extends Application implements HasActivityInjector, HasServic
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

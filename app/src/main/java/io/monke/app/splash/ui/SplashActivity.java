@@ -7,6 +7,7 @@ import javax.inject.Provider;
 
 import io.monke.app.R;
 import io.monke.app.internal.BaseMvpInjectActivity;
+import io.monke.app.settings.ui.SettingsActivity;
 import io.monke.app.setup.ui.SetupActivity;
 import io.monke.app.splash.contract.SplashView;
 import io.monke.app.splash.views.SplashPresenter;
@@ -21,6 +22,11 @@ public class SplashActivity extends BaseMvpInjectActivity implements SplashView 
     @Override
     public void startSetup() {
         startActivityClearTop(this, SetupActivity.class);
+    }
+
+    @Override
+    public void startSettings() {
+        startActivityClearTop(this, SettingsActivity.class);
     }
 
     @ProvidePresenter
