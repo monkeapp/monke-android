@@ -297,7 +297,7 @@ public class SendScreen extends BaseScreen {
             return;
         }
 
-        tx.buyBanana(tx.getAmount(), getKeyboard().getBananaAccount().get().getBalance());
+//        tx.buyBananaIfNecessary(tx.getAmount(), getKeyboard().getBananaAccount().get().getBalance());
 
         getKeyboard().showProgress(false);
         mInputGroup.clearFields();

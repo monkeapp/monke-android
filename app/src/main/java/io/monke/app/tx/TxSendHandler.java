@@ -7,6 +7,7 @@ import java.math.BigInteger;
 
 import javax.inject.Inject;
 
+import io.monke.app.BuildConfig;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AccountStorage;
@@ -16,6 +17,7 @@ import io.monke.app.storage.SecretStorage;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import network.minter.blockchain.models.BCResult;
 import network.minter.blockchain.models.TransactionCommissionValue;
 import network.minter.blockchain.models.TransactionSendResult;
@@ -231,18 +233,47 @@ public class TxSendHandler extends TxHandler {
                 });
     }
 
-    public void buyBanana(BigDecimal amount, BigDecimal bananaBalance) {
+    public Observable<GateResult<TransactionSendResult>> buyBananaIfNecessary(BigDecimal amount, BigDecimal bananaBalance) {
         BigDecimal toSell = bdMin(
                 amount.multiply(new BigDecimal("0.01")),
                 bdMax(BigDecimal.ZERO, BigDecimal.ONE.subtract(bananaBalance))
         );
 
+        getTxInitData(getAccount().get().getAddress())
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .switchMap(new Function<TxInitData, ObservableSource<GateResult<TransactionSendResult>>>() {
+                    @Override
+                    public ObservableSource<GateResult<TransactionSendResult>> apply(TxInitData txInitData) throws Exception {
+                        if(!txInitData.isSuccess()) {
+                            return Observable.just(GateResult.copyError(txInitData.errorResult));
+                        }
+
+                        // creating tx
+                        final Transaction tx = new Transaction.Builder(txInitData.nonce)
+                                .setGasCoin(mGasCoin)
+                                .setGasPrice(txInitData.gas)
+                                .sellCoin()
+                                .setCoinToBuy(BuildConfig.BANANA_COIN)
+                                .setCoinToSell(mFromAccount.getCoin())
+                                .setValueToSell(toSell)
+                                .setMinValueToBuy(0)
+                                .build();
+
+                        return null;
+                    }
+                })
+                .subscribe(txInitData -> {
+
+                });
 
         Timber.d("To sell coins and buy banana: %s", bdHuman(toSell));
 
 
 //        amount.multiply(new BigDecimal("0.01")).min(BigDecimal.ZERO.max())
 //        Math.min(amount*0.01, max(0, 1 - bananaBalance))
+
+        return null;
     }
 
     public void setAccount(AccountItem fromAccount) {

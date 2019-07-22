@@ -105,6 +105,9 @@ public class MonkeKeyboard extends InputMethodService {
     }
 
     public void setError(CharSequence error) {
+        if(error != null) {
+            showProgress(false);
+        }
         errorText.setText(error);
         errorContainer.setVisibility(error != null ? View.VISIBLE : View.GONE);
         errorClose.setOnClickListener(v -> setError(null));
@@ -134,6 +137,7 @@ public class MonkeKeyboard extends InputMethodService {
     @Override
     public View onCreateInputView() {
         mKeyboard = (ConstraintLayout) getLayoutInflater().inflate(R.layout.keyboard_view, null);
+
         ButterKnife.bind(this, mKeyboard);
         screenSend.init(this, mKeyboard);
 

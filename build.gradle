@@ -37,13 +37,13 @@ allprojects {
 
 
 ext {
-    appVersion = "0.1.0-dev"
-    appVersionCode = 1
+    appVersion = "0.1.0-dev02"
+    appVersionCode = 2
 
     minterMinSdk = 21
-    minterMaxSdk = 29
+    minterMaxSdk = 28
     minterLibSupport = "28.0.0"
-    minterBuildTools = "29.0.0"
+    minterBuildTools = "28.0.3"
 
     minterExplorerSDK = "0.4.3"
     minterProfileSDK = "0.2.4"
