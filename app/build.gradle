@@ -57,29 +57,35 @@ android {
             dimension "env"
             applicationId = "io.monke.app"
             buildConfigField "String", "BANANA_COIN", '"BANANA"'
+            buildConfigField "String", "LIVE_BALANCE_URL", '"wss://explorer-rtm.apps.minter.network/connection/websocket"'
         }
 
         netMainNoCrashlytics {
             dimension "env"
             applicationId = "io.monke.app"
             buildConfigField "String", "BANANA_COIN", '"BANANA"'
+            buildConfigField "String", "LIVE_BALANCE_URL", '"wss://explorer-rtm.apps.minter.network/connection/websocket"'
         }
 
         netTest {
             dimension "env"
             applicationId = "io.monke.app"
             buildConfigField "String", "BANANA_COIN", '"BANANATEST"'
+            buildConfigField "String", "LIVE_BALANCE_URL", '"wss://explorer-rtm.testnet.minter.network/connection/websocket"'
         }
 
         netTestNoCrashlytics {
             dimension "env"
             applicationId = "io.monke.app"
             buildConfigField "String", "BANANA_COIN", '"BANANATEST"'
+            buildConfigField "String", "LIVE_BALANCE_URL", '"wss://explorer-rtm.testnet.minter.network/connection/websocket"'
         }
     }
 }
 
 dependencies {
+    implementation project(':centrifuge')
+
     netTestImplementation([
             "network.minter.android:minter-android-core-testnet:${minterCoreSDK}",
             "network.minter.android:minter-android-explorer-testnet:${minterExplorerSDK}",

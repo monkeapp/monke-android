@@ -33,6 +33,7 @@ import io.monke.app.ime.MonkeKeyboard;
 import io.monke.app.internal.di.annotations.ActivityScope;
 import io.monke.app.internal.di.annotations.FragmentScope;
 import io.monke.app.internal.di.annotations.ServiceScope;
+import io.monke.app.services.LiveBalanceService;
 import io.monke.app.settings.ui.BackupSeedActivity;
 import io.monke.app.settings.ui.SettingsActivity;
 import io.monke.app.settings.ui.SettingsFragment;
@@ -58,6 +59,10 @@ public interface InjectorsModule {
     @ContributesAndroidInjector
     @ServiceScope
     MonkeKeyboard monkeKeyboardInjector();
+
+    @ContributesAndroidInjector
+    @ServiceScope
+    LiveBalanceService liveBalanceServiceInjector();
 
     @ContributesAndroidInjector
     @ActivityScope

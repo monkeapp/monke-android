@@ -1,10 +1,11 @@
 package io.monke.app.ime;
 
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.annimon.stream.Stream;
@@ -28,6 +29,7 @@ import io.monke.app.internal.PrefKeys;
 import io.monke.app.internal.common.Lazy;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.internal.helpers.ViewHelper;
+import io.monke.app.services.ServiceConnector;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AccountStorage;
 import io.monke.app.storage.AddressAccount;
@@ -86,6 +88,13 @@ public class MonkeKeyboard extends InputMethodService {
         setTheme(defPrefs.getBoolean(PrefKeys.DAY_NIGHT_THEME, false) ? R.style.KB_Dark : R.style.KB_Light);
         super.onCreate();
         AndroidInjection.inject(this);
+
+        ServiceConnector.bind(getApplicationContext());
+        ServiceConnector.onConnected()
+                .subscribe(res -> res.setOnMessageListener((message, channel, address) -> {
+                    Timber.d("WS ON MESSAGE[%s]: %s", channel, message);
+                    accountStorage.update(true);
+                }));
     }
 
     public boolean hasEnoughBanana() {
@@ -181,9 +190,10 @@ public class MonkeKeyboard extends InputMethodService {
             requestHideSelf(0);
         });
         buttonSwitchKeyboard.setOnClickListener(v -> {
-            Intent intent = new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (mgr != null) {
+                mgr.showInputMethodPicker();
+            }
         });
 
         return mKeyboard;
@@ -201,6 +211,7 @@ public class MonkeKeyboard extends InputMethodService {
             mDisposables.dispose();
         }
         screenSend.destroy();
+        ServiceConnector.release(getApplicationContext());
         Timber.d("OnDestroy KB");
     }
 

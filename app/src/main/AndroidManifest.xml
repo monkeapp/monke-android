@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="io.monke.app">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.monke.app">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".internal.Monke"
@@ -17,38 +17,37 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="b9062f55ec5f4b4a7a4d7e9e2058d75026231947"
-            />
+            android:value="b9062f55ec5f4b4a7a4d7e9e2058d75026231947" />
 
         <activity
             android:name=".setup.ui.SetupActivity"
-            android:screenOrientation="portrait"
-            >
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".splash.ui.SplashActivity"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".settings.ui.SettingsActivity"/>
-        <activity android:name=".settings.ui.BackupSeedActivity"/>
+        <activity android:name=".settings.ui.SettingsActivity" />
+        <activity android:name=".settings.ui.BackupSeedActivity" />
+
+        <service
+            android:name=".services.LiveBalanceService"
+            android:exported="false" />
 
         <service
             android:name=".ime.MonkeKeyboard"
             android:label="Monke Wallet"
-            android:permission="android.permission.BIND_INPUT_METHOD"
-            >
+            android:permission="android.permission.BIND_INPUT_METHOD">
             <meta-data
                 android:name="android.view.im"
-                android:resource="@xml/input_method"/>
+                android:resource="@xml/input_method" />
 
             <intent-filter>
-                <action android:name="android.view.InputMethod"/>
+                <action android:name="android.view.InputMethod" />
             </intent-filter>
 
         </service>

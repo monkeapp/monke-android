@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 import android.widget.EditText;
@@ -150,6 +151,7 @@ public class SendScreen extends BaseScreen {
             mShareListAdapter.setOnItemClickListener((view, item) -> {
                 InputConnection inputConnection = getKeyboard().getCurrentInputConnection();
                 inputConnection.commitText(item.meta != null ? item.meta : item.title, 0);
+                inputConnection.performEditorAction(EditorInfo.IME_ACTION_SEND);
             });
             shareList.setAdapter(mShareListAdapter);
         }
@@ -308,7 +310,7 @@ public class SendScreen extends BaseScreen {
         Stream.of(shareTitles).forEach(item -> shareItems.add(new ShareItem(item)));
         shareItems.add(new ShareItem(
                 getResources().getString(R.string.share_title_tx, result.result.txHash.toShortString()),
-                MinterExplorerApi.newFrontUrl().addPathSegment("transaction").addPathSegment(result.result.txHash.toString()).toString()
+                MinterExplorerApi.newFrontUrl().addPathSegment("transactions").addPathSegment(result.result.txHash.toString()).toString()
         ));
 
         int stringResTitle = ViewHelper.getResFromStyle(getKeyboard(), R.attr.mon_sent_share_title);
