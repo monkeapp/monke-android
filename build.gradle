@@ -37,8 +37,8 @@ allprojects {
 
 
 ext {
-    appVersion = "0.1.0-dev02"
-    appVersionCode = 2
+    appVersion = "0.1.0-dev03"
+    appVersionCode = 3
 
     minterMinSdk = 21
     minterMaxSdk = 28
