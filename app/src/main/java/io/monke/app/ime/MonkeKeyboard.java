@@ -189,7 +189,7 @@ public class MonkeKeyboard extends InputMethodService {
 
 
         buttonHideKeyboard.setOnClickListener(v -> {
-            requestHideSelf(0);
+            requestHideSelf(InputMethodManager.HIDE_NOT_ALWAYS);
         });
         buttonSwitchKeyboard.setOnClickListener(v -> {
             InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

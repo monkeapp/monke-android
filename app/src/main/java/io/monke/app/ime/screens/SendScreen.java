@@ -7,7 +7,6 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,12 +62,15 @@ import static io.monke.app.internal.helpers.MathHelper.bdNull;
 
 public class SendScreen extends BaseScreen {
     @BindView(R.id.balance_available) TextView balanceAvailable;
+    @BindView(R.id.fee_value) TextView feeValue;
     @BindView(R.id.fragment_container) FrameLayout fragmentContainer;
     @BindView(R.id.keypad_hex) ViewGroup keyboardHex;
     @BindView(R.id.keypad_digits) ViewGroup keyboardNumpad;
     @BindView(R.id.share_list) RecyclerView shareList;
     @BindView(R.id.share_container) ViewGroup shareContainer;
-    @BindView(R.id.amount_input_container) ViewGroup inputAmountContainer;
+    @BindView(R.id.address_input_container) ViewGroup addressInputContainer;
+    @BindView(R.id.amount_input_container) ViewGroup amountInputContainer;
+    @BindView(R.id.coin_input_container) ViewGroup coinInputContainer;
     @BindView(R.id.coin_icon) BipCircleImageView coinIcon;
     @BindView(R.id.coin_selector) RecyclerView coinList;
     @BindView(R.id.submit) Button submit;
@@ -149,8 +151,9 @@ public class SendScreen extends BaseScreen {
             shareList.setLayoutManager(shareLayoutManager);
             mShareListAdapter.setOnItemClickListener((view, item) -> {
                 InputConnection inputConnection = getKeyboard().getCurrentInputConnection();
-                inputConnection.commitText(item.meta != null ? item.meta : item.title, 0);
-                inputConnection.performEditorAction(EditorInfo.IME_ACTION_SEND);
+                String val = item.meta != null ? item.meta : item.title;
+                val += " ";
+                inputConnection.commitText(val, val.length());
             });
             shareList.setAdapter(mShareListAdapter);
         }
@@ -337,6 +340,12 @@ public class SendScreen extends BaseScreen {
         mFocusedInteraction = false;
         submit.setText(R.string.btn_send);
         submit.setOnClickListener(this::startExecuteTransaction);
+
+        addressInputContainer.setVisibility(View.VISIBLE);
+        coinInputContainer.setVisibility(View.VISIBLE);
+        amountInputContainer.setVisibility(View.VISIBLE);
+        balanceAvailable.setVisibility(View.VISIBLE);
+        feeValue.setVisibility(View.VISIBLE);
     }
 
     private void focusOn(FocusWidget widget) {
@@ -350,26 +359,50 @@ public class SendScreen extends BaseScreen {
             clearWidgetFocus();
         });
 
+//        addressInputContainer.setVisibility(View.VISIBLE);
+//        coinInputContainer.setVisibility(View.VISIBLE);
+//        amountInputContainer.setVisibility(View.VISIBLE);
+//        balanceAvailable.setVisibility(View.VISIBLE);
+//        feeValue.setVisibility(View.VISIBLE);
+
         switch (widget) {
             case Coin:
                 keyboardNumpad.setVisibility(View.GONE);
                 keyboardHex.setVisibility(View.GONE);
                 shareContainer.setVisibility(View.GONE);
                 coinList.setVisibility(View.VISIBLE);
+
+                addressInputContainer.setVisibility(View.GONE);
+                amountInputContainer.setVisibility(View.VISIBLE);
+                coinInputContainer.setVisibility(View.VISIBLE);
                 break;
             case Amount:
                 keyboardHex.setVisibility(View.GONE);
                 coinList.setVisibility(View.GONE);
                 shareContainer.setVisibility(View.GONE);
                 keyboardNumpad.setVisibility(View.VISIBLE);
+
+                addressInputContainer.setVisibility(View.GONE);
+                amountInputContainer.setVisibility(View.VISIBLE);
+                coinInputContainer.setVisibility(View.VISIBLE);
                 break;
             case Address:
                 keyboardNumpad.setVisibility(View.GONE);
                 coinList.setVisibility(View.GONE);
                 shareContainer.setVisibility(View.GONE);
                 keyboardHex.setVisibility(View.VISIBLE);
+
+                coinInputContainer.setVisibility(View.GONE);
+                amountInputContainer.setVisibility(View.GONE);
+                addressInputContainer.setVisibility(View.VISIBLE);
                 break;
             case Share:
+                addressInputContainer.setVisibility(View.GONE);
+                coinInputContainer.setVisibility(View.GONE);
+                amountInputContainer.setVisibility(View.GONE);
+                balanceAvailable.setVisibility(View.GONE);
+                feeValue.setVisibility(View.GONE);
+
                 keyboardNumpad.setVisibility(View.GONE);
                 coinList.setVisibility(View.GONE);
                 keyboardHex.setVisibility(View.GONE);
@@ -417,7 +450,7 @@ public class SendScreen extends BaseScreen {
             if (matcher.find()) {
                 String val = matcher.group();
                 inputAddress.setText(val);
-//                inputAddress.setSelection(val.length());
+                inputAddress.setSelection(inputAddress.length());
                 break;
             }
 
