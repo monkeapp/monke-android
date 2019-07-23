@@ -58,7 +58,6 @@ public class MonkeKeyboard extends InputMethodService {
     @BindView(R.id.switch_keyboard) View buttonSwitchKeyboard;
     @BindView(R.id.error_container) View errorContainer;
     @BindView(R.id.error_text) TextView errorText;
-    @BindView(R.id.error_close) View errorClose;
 
     @Inject SecretStorage secretStorage;
     @Inject CachedRepository<AddressAccount, AccountStorage> accountStorage;
@@ -109,8 +108,7 @@ public class MonkeKeyboard extends InputMethodService {
             showProgress(false);
         }
         errorText.setText(error);
-        errorContainer.setVisibility(error != null ? View.VISIBLE : View.GONE);
-        errorClose.setOnClickListener(v -> setError(null));
+//        errorText.setVisibility(error != null ? View.VISIBLE : View.GONE);
     }
 
     public Lazy<AccountItem> getAccount() {

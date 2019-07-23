@@ -78,6 +78,7 @@ public class InputGroup {
     };
     private Map<String, EditText> mInputNames = new HashMap<>();
     private Map<EditText, EditText> mValidateRelations = new HashMap<>(2);
+    private OnValidateItemListener mOnValidateItemListener;
 
     public InputGroup addFormValidateListener(OnFormValidateListener listener) {
         mValidFormListeners.add(listener);
@@ -102,6 +103,12 @@ public class InputGroup {
         return this;
     }
 
+    private boolean mWithError = true;
+
+    public void setEnableError(boolean withError) {
+        mWithError = withError;
+    }
+
     public InputGroup addInput(final EditText input) {
         mInputs.add(input);
         if (input.getTag() != null && input.getTag() instanceof String) {
@@ -122,11 +129,11 @@ public class InputGroup {
                     Stream.of(mTextWatchers).forEach(item -> {
                         if (mValidateRelations.containsKey(input)) {
                             hasRelated[0] = true;
-                            boolean secondValid = validate(mValidateRelations.get(input), true);
+                            boolean secondValid = validate(mValidateRelations.get(input), mWithError);
                             item.onTextChanged(mValidateRelations.get(input), secondValid);
                             refValid[1] = secondValid;
                         }
-                        boolean valid = validate(input, true);
+                        boolean valid = validate(input, mWithError);
                         item.onTextChanged(input, valid);
                         refValid[0] = valid;
                     });
@@ -135,7 +142,7 @@ public class InputGroup {
                         mInternalTextListener.onTextChanged(mValidateRelations.get(input), refValid[1]);
                     }
                 } else {
-                    final boolean valid = validate(input, true);
+                    final boolean valid = validate(input, mWithError);
                     mInternalTextListener.onTextChanged(input, valid);
                 }
             }
@@ -151,12 +158,20 @@ public class InputGroup {
     public boolean validate(boolean withError) {
         int countValid = 0;
         for (Map.Entry<EditText, List<BaseValidator>> entry : mInputValidators.entrySet()) {
-            if (validate(entry.getKey(), withError)) {
+            final boolean valid = validate(entry.getKey(), withError);
+            if (mOnValidateItemListener != null) {
+                mOnValidateItemListener.onValidate(entry.getKey(), withError, valid);
+            }
+            if (valid) {
                 countValid++;
             }
         }
 
         return countValid == mInputValidators.size();
+    }
+
+    public void setOnValidateItemListener(OnValidateItemListener listener) {
+        mOnValidateItemListener = listener;
     }
 
     public InputGroup addTextChangedListener(OnTextChangedListener listener) {
@@ -342,5 +357,9 @@ public class InputGroup {
 
     public interface OnTextChangedListener {
         void onTextChanged(EditText editText, boolean valid);
+    }
+
+    public interface OnValidateItemListener {
+        void onValidate(EditText input, boolean withError, boolean valid);
     }
 }

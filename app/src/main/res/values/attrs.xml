@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="mon_keyboard_background" format="reference" />
     <attr name="mon_textColorPrimary" format="reference"/>
     <attr name="mon_textColorSecondary" format="reference"/>
     <attr name="mon_inputBackground" format="reference"/>

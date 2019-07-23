@@ -30,7 +30,7 @@
     <dimen name="card_elevation_overlap">-3dp</dimen>
 
     <dimen name="btn_long_height">44dp</dimen>
-    <dimen name="btn_border_radius">4dp</dimen>
+    <dimen name="btn_border_radius">2dp</dimen>
     <dimen name="btn_min_width">100dp</dimen>
 
     <dimen name="margin_edges">16dp</dimen>

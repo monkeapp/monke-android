@@ -26,8 +26,8 @@
     </style>
 
     <style name="KB_Light" parent="KB">
-        <item name="android:colorBackground">#eceff0</item>
-        <item name="android:background">#eceff0</item>
+        <!--        <item name="android:colorBackground">#eceff0</item>-->
+        <!--        <item name="android:background">#eceff0</item>-->
         <item name="android:textColor">@color/textColorSecondary</item>
         <item name="android:textColorPrimary">@color/textColorSecondary</item>
 
@@ -36,6 +36,7 @@
         <item name="mon_inputBackground">@color/white</item>
         <item name="mon_inputBackgroundError">@color/errorField</item>
         <item name="mon_iconTint">@color/colorPrimary</item>
+        <item name="mon_keyboard_background">@color/light_background</item>
 
         <item name="mon_buttonColorDefault">@color/buttonColorDefault</item>
         <item name="mon_buttonColorHovered">@color/buttonColorHovered</item>
@@ -53,14 +54,14 @@
     </style>
 
     <style name="KB_Dark" parent="KB">
-        <item name="android:colorBackground">#21272b</item>
-        <item name="android:background">#21272b</item>
+
         <item name="android:textColorHint">#a0a5a8</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="colorControlHighlight">@color/dark_inputBackground</item>
 
+        <item name="mon_keyboard_background">@color/dark_background</item>
         <item name="mon_textColorPrimary">@color/white</item>
         <item name="mon_textColorSecondary">@color/dark_textSecondary</item>
         <item name="mon_inputBackground">@color/dark_inputBackground</item>

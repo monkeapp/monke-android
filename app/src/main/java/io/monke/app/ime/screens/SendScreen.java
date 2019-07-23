@@ -21,6 +21,7 @@ import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -57,8 +58,6 @@ import network.minter.profile.MinterProfileApi;
 import timber.log.Timber;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static io.monke.app.internal.helpers.MathHelper.bdGT;
-import static io.monke.app.internal.helpers.MathHelper.bdGTE;
 import static io.monke.app.internal.helpers.MathHelper.bdHuman;
 import static io.monke.app.internal.helpers.MathHelper.bdNull;
 
@@ -196,33 +195,26 @@ public class SendScreen extends BaseScreen {
             focusOn(FocusWidget.Coin);
         });
 
-        mInputGroup.addInput(inputAmount);
-        mInputGroup.addInput(inputAddress);
-        mInputGroup.addValidator(inputAmount, new RegexValidator("^(\\d*)(\\.)?(\\d{1,18})$", "Invalid number", false));
-        mInputGroup.addValidator(inputAddress, new RegexValidator(MinterAddress.ADDRESS_PATTERN, "Invalid address", false));
-        mInputGroup.addFilter(inputAmount, new DecimalInputFilter(() -> inputAmount));
-        mInputGroup.addFormValidateListener(valid -> {
-            mFormValid = valid;
-            if (!mFocusedInteraction) {
-                if (bdGTE(getKeyboard().getAccount().get().getBalance(), tx.getAmount())) {
-                    submit.setEnabled(valid);
-                    if (valid) {
-                        submit.setOnClickListener(this::startExecuteTransaction);
-                    } else {
-                        submit.setOnClickListener(null);
-                    }
+
+        mInputGroup.setOnValidateItemListener(new InputGroup.OnValidateItemListener() {
+            @Override
+            public void onValidate(EditText input, boolean withError, boolean valid) {
+                View parent = (View) input.getParent();
+                if (!valid) {
+                    parent.setBackgroundColor(mErrorInputColor);
+                } else {
+                    parent.setBackgroundColor(mOkInputColor);
                 }
             }
         });
+        mInputGroup.setEnableError(false);
+        mInputGroup.addInput(inputAmount);
+        mInputGroup.addInput(inputAddress);
+        mInputGroup.addValidator(inputAmount, new RegexValidator("^(\\d*)(\\.)?(\\d{1,18})$", "Invalid number", true));
+        mInputGroup.addValidator(inputAddress, new RegexValidator(MinterAddress.ADDRESS_PATTERN, "Invalid address", true));
+        mInputGroup.addFilter(inputAmount, new DecimalInputFilter(() -> inputAmount));
+
         mInputGroup.addTextChangedListener((editText, valid) -> {
-            View parent = (View) editText.getParent();
-
-            if (!valid) {
-                parent.setBackgroundColor(mErrorInputColor);
-            } else {
-                parent.setBackgroundColor(mOkInputColor);
-            }
-
             if (editText.getId() == R.id.input_address && !valid) {
                 addressIcon.setVisibility(View.GONE);
             }
@@ -245,24 +237,10 @@ public class SendScreen extends BaseScreen {
             switch (editText.getId()) {
                 case R.id.input_amount:
                     BigDecimal amount = MathHelper.bigDecimalFromString(val);
-                    if (bdNull(amount)) {
-                        mInputGroup.setError("amount", "Can't be 0");
-                        parent.setBackgroundColor(mErrorInputColor);
-                        break;
-                    } else if (bdGT(amount, tx.getAccount().get().getBalance())) {
-                        mInputGroup.setError("amount", "Not enough balance");
-                        parent.setBackgroundColor(mErrorInputColor);
-                        break;
-                    } else {
-                        parent.setBackgroundColor(mOkInputColor);
-                        mInputGroup.setError("amount", null);
-                    }
-
                     tx.setAmount(amount);
                     break;
 
                 case R.id.input_address:
-
                     tx.setRecipient(new MinterAddress(val));
                     addressIcon.setImageUrl(MinterProfileApi.getUserAvatarUrlByAddress(tx.getRecipient()));
                     addressIcon.setVisibility(View.VISIBLE);
@@ -274,8 +252,12 @@ public class SendScreen extends BaseScreen {
     }
 
     private void startExecuteTransaction(View view) {
+        getKeyboard().setError(null);
+        if (!mInputGroup.validate(false)) {
+            return;
+        }
         getKeyboard().showProgress(true);
-        submit.setEnabled(false);
+//        submit.setEnabled(false);
         unsubscribeOnDestroy(tx.send().subscribe(this::onExecuteSuccess, this::onExecuteFailed));
     }
 
@@ -354,14 +336,7 @@ public class SendScreen extends BaseScreen {
         shareContainer.setVisibility(View.GONE);
         mFocusedInteraction = false;
         submit.setText(R.string.btn_send);
-        submit.setEnabled(mFormValid);
-
-
-        if (mFormValid) {
-            submit.setOnClickListener(this::startExecuteTransaction);
-        } else {
-            submit.setOnClickListener(null);
-        }
+        submit.setOnClickListener(this::startExecuteTransaction);
     }
 
     private void focusOn(FocusWidget widget) {
@@ -411,7 +386,7 @@ public class SendScreen extends BaseScreen {
             inputAmount.setText("0");
             return;
         }
-        inputAmount.setText(tx.getAccount().get().getBalance().toPlainString());
+        inputAmount.setText(tx.getAccount().get().getBalance().setScale(4, RoundingMode.HALF_DOWN).toPlainString());
     }
 
 
@@ -442,7 +417,7 @@ public class SendScreen extends BaseScreen {
             if (matcher.find()) {
                 String val = matcher.group();
                 inputAddress.setText(val);
-                inputAddress.setSelection(val.length());
+//                inputAddress.setSelection(val.length());
                 break;
             }
 

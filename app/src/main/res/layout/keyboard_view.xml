@@ -6,28 +6,88 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:animateLayoutChanges="true"
+    android:background="?attr/mon_keyboard_background"
     android:minHeight="200dp">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_margin_left"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/margin_edges_half" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/balance_available">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_margin_right"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/margin_edges_half" />
+        <include
+            android:id="@+id/keypad_hex"
+            layout="@layout/keypad_hex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guide_margin_top"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/margin_edges_half" />
+        <include
+            android:id="@+id/keypad_digits"
+            layout="@layout/keypad_digits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/coin_selector"
+            layout="@layout/coin_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="162dp"
+            android:minHeight="54dp"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/share_container"
+            layout="@layout/share_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/right_buttons_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/edge_space"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintTop_toBottomOf="@id/bottom_space">
+
+        <ImageView
+            android:id="@+id/hide_keyboard"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_chevron_down_white"
+            android:tint="@color/grey"
+            android:visibility="visible"
+            app:layout_constraintVertical_bias="1" />
+
+        <TextView
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            android:text="@string/btn_close"
+            android:textAllCaps="true"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/text_size_default"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/bip_icon"
@@ -37,18 +97,38 @@
         app:layout_constraintStart_toStartOf="@+id/guide_margin_left"
         app:layout_constraintTop_toTopOf="@+id/guide_margin_top" />
 
-    <io.monke.app.internal.views.widgets.ColoredProgressBar
-        android:id="@+id/bip_progress"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:background="@color/transparent"
-        android:visibility="invisible"
-        app:color="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/bip_icon"
-        app:layout_constraintEnd_toEndOf="@id/bip_icon"
-        app:layout_constraintStart_toStartOf="@id/bip_icon"
-        app:layout_constraintTop_toTopOf="@id/bip_icon"
-        tools:visibility="visible" />
+    <ImageView
+        android:id="@+id/switch_keyboard"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_keyboard_white"
+        android:tint="@color/grey"
+        app:layout_constraintBottom_toTopOf="@id/edge_space"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/bottom_space"
+        app:layout_constraintVertical_bias="1" />
+
+    <Space
+        android:id="@+id/bottom_space"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/margin_edges_half"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_container"
+        app:layout_goneMarginTop="0dp" />
+
+    <Space
+        android:id="@+id/edge_space"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/margin_edges"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/balance"
@@ -73,6 +153,30 @@
         app:layout_constraintStart_toStartOf="@id/balance"
         app:layout_constraintTop_toBottomOf="@id/balance"
         tools:text="9 600 000.0396" />
+
+    <TextView
+        android:id="@+id/balance_available"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:textColor="?attr/mon_textColorSecondary"
+        android:textSize="@dimen/text_size_12"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/coin_input_container"
+        tools:text="Available 100 000 000.0000 BIP" />
+
+    <TextView
+        android:id="@+id/fee_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:text="Fee 0.0100 BIP"
+        android:textColor="?attr/mon_textColorSecondary"
+        android:textSize="@dimen/text_size_12"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintTop_toBottomOf="@id/amount_input_container" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/account_button"
@@ -110,20 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/mon_inputBackground">
-<!--            75000/63/0.11-->
-            <io.monke.app.internal.views.widgets.BipCircleImageView
-                android:id="@+id/address_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="@dimen/margin_edges_half"
-                android:background="@color/transparent"
-                android:src="@drawable/ic_copy"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
-
+            <!--            75000/63/0.11-->
             <EditText
                 android:id="@+id/dummy_input"
                 android:layout_width="0dp"
@@ -173,6 +264,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/input_address"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <io.monke.app.internal.views.widgets.BipCircleImageView
+                android:id="@+id/address_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="@dimen/margin_edges_half"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_copy"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
@@ -195,18 +299,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/mon_inputBackground">
-
-            <io.monke.app.internal.views.widgets.BipCircleImageView
-                android:id="@+id/coin_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="@dimen/margin_edges_half"
-                android:background="@color/transparent"
-                android:src="@drawable/ic_bip_round"
-                app:civ_border_width="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/input_coin"
@@ -236,6 +328,18 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="BIPBIPBIPB" />
 
+            <io.monke.app.internal.views.widgets.BipCircleImageView
+                android:id="@+id/coin_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="@dimen/margin_edges_half"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_bip_round"
+                app:civ_border_width="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
@@ -248,7 +352,6 @@
         android:layout_marginStart="@dimen/margin_edges_half"
         android:layout_marginTop="@dimen/margin_edges_half"
         android:clickable="false"
-        android:descendantFocusability="beforeDescendants"
         android:focusable="false"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintHorizontal_bias="1"
@@ -268,12 +371,12 @@
                 android:layout_marginEnd="@dimen/margin_edges_half"
                 android:background="@android:color/transparent"
                 android:clickable="true"
-                android:digits="0,1,2,3,4,5,6,7,8,9,.,\,"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
                 android:ellipsize="end"
                 android:focusable="true"
                 android:fontFamily="@string/font_medium"
                 android:hint="AMOUNT"
-                android:inputType="textMultiLine|numberDecimal"
+                android:inputType="numberDecimal"
 
                 android:maxLines="1"
                 android:paddingTop="12dp"
@@ -296,7 +399,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:background="@color/transparent"
-                android:minWidth="80dp"
+                android:minWidth="0dp"
+                android:paddingStart="@dimen/margin_edges_half"
+                android:paddingEnd="@dimen/margin_edges_half"
                 android:src="@drawable/ic_copy"
                 android:text="MAX"
                 android:textColor="?attr/mon_iconTint"
@@ -307,83 +412,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/balance_available"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_edges_half"
-        android:textColor="?attr/mon_textColorSecondary"
-        android:textSize="@dimen/text_size_12"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/coin_input_container"
-        tools:text="Available 100 000 000.0000 BIP" />
-
-    <TextView
-        android:id="@+id/fee_value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_edges_half"
-        android:text="Fee 0.0100 BIP"
-        android:textColor="?attr/mon_textColorSecondary"
-        android:textSize="@dimen/text_size_12"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
-        app:layout_constraintTop_toBottomOf="@id/amount_input_container" />
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_edges_half"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/balance_available">
-
-        <include
-            android:id="@+id/keypad_hex"
-            layout="@layout/keypad_hex"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <include
-            android:id="@+id/keypad_digits"
-            layout="@layout/keypad_digits"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <include
-            android:id="@+id/coin_selector"
-            layout="@layout/coin_selector"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxHeight="162dp"
-            android:minHeight="54dp"
-            android:visibility="gone" />
-
-        <include
-            android:id="@+id/share_container"
-            layout="@layout/share_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible" />
-    </FrameLayout>
-
-    <io.monke.app.internal.views.widgets.WalletButton
-        android:id="@+id/submit"
-        style="@style/Wallet.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_edges_half"
-        android:text="OK"
-        android:textSize="@dimen/text_size_default"
-        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
-        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/fragment_container" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/error_container"
@@ -402,100 +430,59 @@
             android:textColor="@color/errorColor"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/error_close"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="This is an error. This is an error. This is an error. This is an error. This is an error. This is an error. This is an error. This is an error. This is an error. This is an error. This is an error. " />
 
-        <ImageView
-            android:id="@+id/error_close"
-            android:layout_width="24dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/margin_edges_half"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="2dp"
-            android:src="@drawable/ic_close_white"
-            android:tint="@color/errorColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Space
-        android:id="@+id/bottom_space"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_left"
         android:layout_width="0dp"
-        android:layout_height="@dimen/margin_edges_half"
-        android:layout_marginTop="4dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/error_container"
-        app:layout_goneMarginTop="0dp" />
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_edges_half" />
 
-    <ImageView
-        android:id="@+id/switch_keyboard"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/ic_keyboard_white"
-        android:tint="@color/grey"
-        app:layout_constraintBottom_toTopOf="@id/edge_space"
-        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/bottom_space"
-        app:layout_constraintVertical_bias="1" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_edges_half" />
 
-    <FrameLayout
-        android:id="@+id/right_buttons_container"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/margin_edges_half" />
+
+    <io.monke.app.internal.views.widgets.ColoredProgressBar
+        android:id="@+id/bip_progress"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@color/transparent"
+        android:visibility="invisible"
+        app:color="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/bip_icon"
+        app:layout_constraintEnd_toEndOf="@id/bip_icon"
+        app:layout_constraintStart_toStartOf="@id/bip_icon"
+        app:layout_constraintTop_toTopOf="@id/bip_icon"
+        tools:visibility="visible" />
+
+
+    <io.monke.app.internal.views.widgets.WalletButton
+        android:id="@+id/submit"
+        style="@style/Wallet.Button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/edge_space"
+        android:layout_marginTop="@dimen/margin_edges_half"
+        android:text="OK"
+        android:textSize="@dimen/text_size_default"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
-        app:layout_constraintTop_toBottomOf="@id/bottom_space">
-
-        <ImageView
-            android:id="@+id/hide_keyboard"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_chevron_down_white"
-            android:tint="@color/grey"
-            android:visibility="visible"
-            app:layout_constraintVertical_bias="1" />
-
-        <TextView
-            android:id="@+id/btn_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
-            android:text="@string/btn_close"
-            android:textAllCaps="true"
-            android:textColor="@color/grey"
-            android:textSize="@dimen/text_size_default"
-            android:textStyle="bold"
-            android:visibility="gone" />
-    </FrameLayout>
-
-
-    <Space
-        android:id="@+id/edge_space"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/margin_edges"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/fragment_container" />
 
     <!--    <FrameLayout-->
     <!--        android:id="@+id/container"-->
