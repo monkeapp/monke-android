@@ -2,6 +2,8 @@ package io.monke.app.setup.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -13,6 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.monke.app.R;
 import io.monke.app.internal.BaseMvpInjectActivity;
+import io.monke.app.internal.Monke;
 import io.monke.app.settings.ui.SettingsActivity;
 import io.monke.app.setup.adapters.SetupAdapter;
 import io.monke.app.setup.contract.SetupView;
@@ -23,6 +26,7 @@ import moxy.presenter.ProvidePresenter;
 public class SetupActivity extends BaseMvpInjectActivity implements SetupView {
 
     @BindView(R.id.list) RecyclerView list;
+    @BindView(R.id.testInput) EditText testInput;
 
     @Inject Provider<SetupPresenter> presenterProvider;
     @InjectPresenter SetupPresenter presenter;
@@ -33,6 +37,9 @@ public class SetupActivity extends BaseMvpInjectActivity implements SetupView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        if (Monke.ENABLE_CRASHLYTICS) {
+            testInput.setVisibility(View.GONE);
+        }
     }
 
     @Override

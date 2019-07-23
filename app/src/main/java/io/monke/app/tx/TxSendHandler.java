@@ -226,6 +226,7 @@ public class TxSendHandler extends TxHandler {
 
                     final SecretData data = secretStorage.getSecret(mFromAccount.address);
                     final TransactionSign sign = tx.signSingle(data.getPrivateKey());
+                    data.cleanup();
 
                     return rxGate(getTxRepo().sendTransaction(sign))
                             .onErrorResumeNext(toGateError());
@@ -239,7 +240,7 @@ public class TxSendHandler extends TxHandler {
                 bdMax(BigDecimal.ZERO, BigDecimal.ONE.subtract(bananaBalance))
         );
 
-        getTxInitData(getAccount().get().getAddress())
+        return getTxInitData(getAccount().get().getAddress())
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .switchMap(new Function<TxInitData, ObservableSource<GateResult<TransactionSendResult>>>() {
@@ -260,20 +261,18 @@ public class TxSendHandler extends TxHandler {
                                 .setMinValueToBuy(0)
                                 .build();
 
-                        return null;
+                        final SecretData data = secretStorage.getSecret(mFromAccount.address);
+                        final TransactionSign sign = tx.signSingle(data.getPrivateKey());
+                        data.cleanup();
+
+                        return rxGate(getTxRepo().sendTransaction(sign))
+                                .onErrorResumeNext(toGateError());
                     }
-                })
-                .subscribe(txInitData -> {
-
                 });
-
-        Timber.d("To sell coins and buy banana: %s", bdHuman(toSell));
 
 
 //        amount.multiply(new BigDecimal("0.01")).min(BigDecimal.ZERO.max())
 //        Math.min(amount*0.01, max(0, 1 - bananaBalance))
-
-        return null;
     }
 
     public void setAccount(AccountItem fromAccount) {
