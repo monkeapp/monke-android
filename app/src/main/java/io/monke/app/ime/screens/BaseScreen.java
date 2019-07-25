@@ -23,10 +23,14 @@ public abstract class BaseScreen {
     }
 
     public final void destroy() {
-        mKeyboard.clear();
+        if (mKeyboard != null && mKeyboard.get() != null) {
+            mKeyboard.clear();
+        }
+
         if (!mSubscriptions.isDisposed()) {
             mSubscriptions.dispose();
         }
+        mKeyboard.clear();
         onDestroy();
     }
 

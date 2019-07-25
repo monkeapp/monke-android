@@ -95,8 +95,11 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     protected void onStop() {
         super.onStop();
         if (mDialog != null) {
-            mDialog.dismiss();
-            mDialog = null;
+            try {
+                mDialog.dismiss();
+                mDialog = null;
+            } catch (Throwable ignore) {
+            }
         }
     }
 }
