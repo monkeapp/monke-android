@@ -20,7 +20,6 @@ import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -415,11 +414,11 @@ public class SendScreen extends BaseScreen {
     }
 
     private void onClickUseMax(View view) {
-        if (getKeyboard().getAccount() == null || bdNull(tx.getAccount().get().getBalance())) {
+        if (tx.getAccount() == null || bdNull(tx.getAccount().get().getBalance())) {
             inputAmount.setText("0");
             return;
         }
-        inputAmount.setText(tx.getAccount().get().getBalance().setScale(4, RoundingMode.HALF_DOWN).toPlainString());
+        inputAmount.setText(bdHuman(tx.getAccount().get().getBalance()));
     }
 
 

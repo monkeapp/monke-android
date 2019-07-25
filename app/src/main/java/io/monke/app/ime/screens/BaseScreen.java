@@ -30,7 +30,7 @@ public abstract class BaseScreen {
         if (!mSubscriptions.isDisposed()) {
             mSubscriptions.dispose();
         }
-        mKeyboard.clear();
+
         onDestroy();
     }
 

@@ -166,7 +166,7 @@ public class MonkeKeyboard extends InputMethodService {
                     showProgress(false);
                     mAccount = res.findByCoin(MinterSDK.DEFAULT_COIN, mAddress);
                     mBananaAccount = res.findByCoin(BuildConfig.BANANA_COIN, mAddress);
-                    setBalance(res.getTotalBalance());
+                    setBalance(mAccount.getBalance());
                     Stream.of(mOnUpdateAccountListeners).forEach(item -> item.onUpdate(res));
                 });
 

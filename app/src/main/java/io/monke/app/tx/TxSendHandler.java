@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import javax.inject.Inject;
 
 import io.monke.app.BuildConfig;
+import io.monke.app.internal.common.Lazy;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AccountStorage;
@@ -68,6 +69,11 @@ public class TxSendHandler extends TxHandler {
             return;
         }
         mAmount = amount;
+    }
+
+    @Override
+    public Lazy<AccountItem> getAccount() {
+        return () -> mFromAccount;
     }
 
     public String getCoin() {

@@ -9,12 +9,14 @@ import io.monke.app.apis.explorer.CachedExplorerAddressRepository;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.internal.mvp.MvpBasePresenter;
 import io.monke.app.settings.contract.SettingsView;
+import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AccountStorage;
 import io.monke.app.storage.AddressAccount;
 import io.monke.app.storage.SecretStorage;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import moxy.InjectViewState;
+import network.minter.core.MinterSDK;
 import network.minter.explorer.models.DelegationInfo;
 import network.minter.explorer.models.ExpResult;
 import timber.log.Timber;
@@ -42,7 +44,8 @@ public class SettingsPresenter extends MvpBasePresenter<SettingsView> {
                 .subscribeOn(Schedulers.io())
                 .subscribe(res -> {
                     Timber.d("Loaded balance");
-                    getViewState().setBalance(res.getTotalBalance());
+                    AccountItem bip = res.findByCoin(MinterSDK.DEFAULT_COIN);
+                    getViewState().setBalance(bip.getBalance());
                 });
 
 
