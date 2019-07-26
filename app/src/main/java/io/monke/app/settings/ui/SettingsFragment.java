@@ -2,9 +2,11 @@ package io.monke.app.settings.ui;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -64,6 +66,25 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 return true;
             }
+        });
+
+        findPreference("set_rate_app").setOnPreferenceClickListener(pref -> {
+            if (getActivity() == null) return false;
+
+            final String appPackageName = getActivity().getPackageName(); // getPackageName() place Context or Activity object
+            try {
+                getActivity().startActivity(new Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("market://details?id=" + appPackageName)
+                ));
+            } catch (ActivityNotFoundException ex) {
+                // если вдруг стора нет в телефоне
+                getActivity().startActivity(new Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)
+                ));
+            }
+            return true;
         });
 
         findPreference("set_backup_mnemonic").setOnPreferenceClickListener(preference -> {

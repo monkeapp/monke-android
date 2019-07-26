@@ -22,6 +22,7 @@
         />
 
     <Preference
+        android:enabled="false"
         android:icon="@drawable/ic_make_donation"
         android:key="set_make_donation"
         android:summary="@string/settings_make_donation_desc"
@@ -29,6 +30,7 @@
         />
 
     <Preference
+        android:enabled="false"
         android:icon="@drawable/ic_buy_banana"
         android:key="set_buy_banana"
         android:summary="@string/settings_buy_banana_desc"
