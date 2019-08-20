@@ -27,16 +27,15 @@ public class DigitKeypad extends KeypadHandler {
         put("backspace", KeyType.Backspace);
     }};
 
-    private List<View> mKeys = new ArrayList<>(12);
-
     public DigitKeypad(ViewGroup rootView) {
         super(rootView);
-        mKeys.addAll(ViewHelper.getChildrenList(row0));
-        mKeys.addAll(ViewHelper.getChildrenList(row1));
-        mKeys.addAll(ViewHelper.getChildrenList(row2));
-        mKeys.addAll(ViewHelper.getChildrenList(row3));
+        final List<View> keys = new ArrayList<>(12);
+        keys.addAll(ViewHelper.getChildrenList(row0));
+        keys.addAll(ViewHelper.getChildrenList(row1));
+        keys.addAll(ViewHelper.getChildrenList(row2));
+        keys.addAll(ViewHelper.getChildrenList(row3));
 
-        Stream.of(mKeys)
+        Stream.of(keys)
                 .forEach(item -> {
                     item.setOnClickListener(v -> {
                         if (v.getTag() != null) {

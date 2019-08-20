@@ -47,20 +47,23 @@ public abstract class KeypadHandler {
         setOnKeyListener((type, value) -> {
             CharSequence src = firstNonNull(editText.getText(), "");
             String txt = src.toString();
-            int inputPos = txt.length();
+
+            int inputPos = editText.getSelectionStart();//txt.length();
 
             if (type == KeyType.Simple) {
-                txt += value;
-                inputPos = txt.length();
+                txt = editText.getText().insert(editText.getSelectionStart(), value).toString();
+                inputPos = editText.getSelectionStart();
             } else {
                 switch (type) {
                     case Backspace:
                         if (!txt.isEmpty()) {
                             int pos = editText.getSelectionStart();
-                            if (pos <= 1) {
-                                txt = "";
+                            if (pos == 1 && txt.length() == 1) {
                                 inputPos = pos;
+                                txt = "";
                                 break;
+                            } else if (pos < 1) {
+                                inputPos = 0;
                             } else if (pos == txt.length()) {
                                 txt = txt.substring(0, txt.length() - 1);
                                 inputPos = txt.length();

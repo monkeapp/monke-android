@@ -26,15 +26,14 @@ public class HexKeypad extends KeypadHandler {
         put("backspace", KeyType.Backspace);
     }};
 
-    private List<View> mKeys = new ArrayList<>(18);
-
     public HexKeypad(ViewGroup rootView) {
         super(rootView);
-        mKeys.addAll(ViewHelper.getChildrenList(row0));
-        mKeys.addAll(ViewHelper.getChildrenList(row1));
-        mKeys.add(backspace);
+        final List<View> keys = new ArrayList<>(18);
+        keys.addAll(ViewHelper.getChildrenList(row0));
+        keys.addAll(ViewHelper.getChildrenList(row1));
+        keys.add(backspace);
 
-        Stream.of(mKeys)
+        Stream.of(keys)
                 .forEach(item -> {
                     item.setOnClickListener(v -> {
                         if (v.getTag() != null) {

@@ -29,6 +29,7 @@ import io.monke.app.internal.PrefKeys;
 import io.monke.app.internal.common.Lazy;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.internal.helpers.ViewHelper;
+import io.monke.app.internal.views.widgets.WalletButton;
 import io.monke.app.services.ServiceConnector;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AccountStorage;
@@ -55,6 +56,7 @@ public class MonkeKeyboard extends InputMethodService {
     @BindView(R.id.bip_progress) View progress;
     @BindView(R.id.hide_keyboard) View buttonHideKeyboard;
     @BindView(R.id.btn_close) View buttonClose;
+    @BindView(R.id.submit) WalletButton submit;
     @BindView(R.id.switch_keyboard) View buttonSwitchKeyboard;
     @BindView(R.id.error_container) View errorContainer;
     @BindView(R.id.error_text) TextView errorText;
@@ -202,7 +204,10 @@ public class MonkeKeyboard extends InputMethodService {
     }
 
     public void showProgress(boolean show) {
-        home.setAlpha(show ? 0.5f : 1.0f);
+        submit.setClickable(!show);
+        if (show) {
+            submit.setText(null);
+        }
         progress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 

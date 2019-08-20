@@ -380,12 +380,6 @@ public class SendScreen extends BaseScreen {
             clearWidgetFocus();
         });
 
-//        addressInputContainer.setVisibility(View.VISIBLE);
-//        coinInputContainer.setVisibility(View.VISIBLE);
-//        amountInputContainer.setVisibility(View.VISIBLE);
-//        balanceAvailable.setVisibility(View.VISIBLE);
-//        feeValue.setVisibility(View.VISIBLE);
-
         switch (widget) {
             case Coin:
                 keyboardNumpad.setVisibility(View.GONE);

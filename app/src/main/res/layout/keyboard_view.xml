@@ -176,11 +176,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
         android:animateLayoutChanges="true"
+        android:gravity="end"
+        android:textAlignment="textEnd"
         android:textColor="?attr/mon_textColorSecondary"
         android:textSize="@dimen/text_size_12"
         android:textStyle="bold"
-        android:gravity="end"
-        android:textAlignment="textEnd"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintTop_toBottomOf="@id/amount_input_container"
@@ -435,7 +435,7 @@
         android:layout_marginTop="@dimen/margin_edges_half"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/submit">
+        app:layout_constraintTop_toBottomOf="@id/submit_container">
 
         <TextView
             android:id="@+id/error_text"
@@ -473,33 +473,59 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/margin_edges_half" />
 
-    <io.monke.app.internal.views.widgets.ColoredProgressBar
-        android:id="@+id/bip_progress"
-        android:layout_width="34dp"
-        android:layout_height="34dp"
-        android:animateLayoutChanges="true"
-        android:background="@color/transparent"
-        android:visibility="invisible"
-        app:color="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/bip_icon"
-        app:layout_constraintEnd_toEndOf="@id/bip_icon"
-        app:layout_constraintStart_toStartOf="@id/bip_icon"
-        app:layout_constraintTop_toTopOf="@id/bip_icon"
-        tools:visibility="visible" />
-
-
-    <io.monke.app.internal.views.widgets.WalletButton
-        android:id="@+id/submit"
-        style="@style/Wallet.Button"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/submit_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
-        android:animateLayoutChanges="true"
-        android:text="OK"
-        android:textSize="@dimen/text_size_default"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/fragment_container" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_container"
+        android:animateLayoutChanges="true">
+
+        <io.monke.app.internal.views.widgets.ColoredProgressBar
+            android:id="@+id/bip_progress"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="@color/transparent"
+
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:elevation="2dp"
+            android:translationZ="1dp"
+            android:visibility="invisible"
+            app:color="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias=".5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias=".5"
+            tools:visibility="visible" />
+
+        <io.monke.app.internal.views.widgets.WalletButton
+            android:id="@+id/submit"
+            style="@style/Wallet.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            android:text="@string/btn_ok"
+            android:textSize="@dimen/text_size_default"
+            android:translationZ="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/submit" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
