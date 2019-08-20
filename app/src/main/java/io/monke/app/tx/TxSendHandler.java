@@ -69,11 +69,16 @@ public class TxSendHandler extends TxHandler {
             return;
         }
         mAmount = amount;
+        Timber.d("Set amount to send: %s", mAmount.toPlainString());
     }
 
     @Override
     public Lazy<AccountItem> getAccount() {
         return () -> mFromAccount;
+    }
+
+    public void setAccount(AccountItem fromAccount) {
+        mFromAccount = fromAccount;
     }
 
     public String getCoin() {
@@ -171,7 +176,7 @@ public class TxSendHandler extends TxHandler {
 
                     // don't calc fee if enough balance in base coin and we are sending not a base coin (MNT or BIP)
                     if (enoughBaseCoinForCommission && !mFromAccount.getCoin().equals(MinterSDK.DEFAULT_COIN)) {
-                        cntRes.commission = new BigDecimal(0);
+                        cntRes.commission = BigDecimal.ZERO;
                     }
 
                     // if balance enough to send required sum + fee, do nothing
@@ -211,7 +216,7 @@ public class TxSendHandler extends TxHandler {
                     }
 
                     Timber.tag("TX Send").d("Send data: gasCoin=%s, coin=%s, to=%s, from=%s, amount=%s",
-                            mFromAccount.getCoin(),
+                            mGasCoin,
                             mFromAccount.getCoin(),
                             getRecipient().toString(),
                             mFromAccount.getAddress().toString(),
@@ -241,10 +246,23 @@ public class TxSendHandler extends TxHandler {
     }
 
     public Observable<GateResult<TransactionSendResult>> buyBananaIfNecessary(BigDecimal amount, BigDecimal bananaBalance) {
+        if (bdGTE(bananaBalance, MIN_BANANA_ACC) || getAccount().get().getCoin().equals(BuildConfig.BANANA_COIN)) {
+            Timber.d("Buy banana is unnecessary");
+            return Observable.empty();
+        }
+
+
         BigDecimal toSell = bdMin(
                 amount.multiply(new BigDecimal("0.01")),
-                bdMax(BigDecimal.ZERO, BigDecimal.ONE.subtract(bananaBalance))
+                bdMax(BigDecimal.ZERO, MIN_BANANA_ACC.subtract(bananaBalance))
         );
+
+        if (toSell.equals(BigDecimal.ZERO)) {
+            Timber.w("Nothing to buy");
+            return Observable.empty();
+        }
+
+        Timber.d("To sell BIPs to buy BANANA: %s", (toSell.toPlainString()));
 
         return getTxInitData(getAccount().get().getAddress())
                 .observeOn(Schedulers.io())
@@ -252,7 +270,7 @@ public class TxSendHandler extends TxHandler {
                 .switchMap(new Function<TxInitData, ObservableSource<GateResult<TransactionSendResult>>>() {
                     @Override
                     public ObservableSource<GateResult<TransactionSendResult>> apply(TxInitData txInitData) throws Exception {
-                        if(!txInitData.isSuccess()) {
+                        if (!txInitData.isSuccess()) {
                             return Observable.just(GateResult.copyError(txInitData.errorResult));
                         }
 
@@ -275,13 +293,5 @@ public class TxSendHandler extends TxHandler {
                                 .onErrorResumeNext(toGateError());
                     }
                 });
-
-
-//        amount.multiply(new BigDecimal("0.01")).min(BigDecimal.ZERO.max())
-//        Math.min(amount*0.01, max(0, 1 - bananaBalance))
-    }
-
-    public void setAccount(AccountItem fromAccount) {
-        mFromAccount = fromAccount;
     }
 }

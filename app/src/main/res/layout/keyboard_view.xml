@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:animateLayoutChanges="true"
+    android:animateLayoutChanges="false"
     android:background="?attr/mon_keyboard_background"
-    android:minHeight="200dp">
+    android:minHeight="200dp"
+    tools:layout_gravity="bottom">
 
+    <!--    KEYPADS-->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/balance_available">
@@ -93,6 +95,7 @@
         android:id="@+id/bip_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:animateLayoutChanges="true"
         android:src="@drawable/ic_bip_round"
         app:layout_constraintStart_toStartOf="@+id/guide_margin_left"
         app:layout_constraintTop_toTopOf="@+id/guide_margin_top" />
@@ -159,6 +162,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
         android:textColor="?attr/mon_textColorSecondary"
         android:textSize="@dimen/text_size_12"
         android:textStyle="bold"
@@ -171,13 +175,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
-        android:text="Fee 0.0100 BIP"
+        android:animateLayoutChanges="true"
         android:textColor="?attr/mon_textColorSecondary"
         android:textSize="@dimen/text_size_12"
         android:textStyle="bold"
+        android:gravity="end"
+        android:textAlignment="textEnd"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
-        app:layout_constraintTop_toBottomOf="@id/amount_input_container" />
+        app:layout_constraintTop_toBottomOf="@id/amount_input_container"
+        tools:text="Fee 0.0100 BIP" />
 
+    <!--    MY ADDRESS-->
     <androidx.cardview.widget.CardView
         android:id="@+id/account_button"
         style="@style/CardInput"
@@ -199,6 +208,7 @@
             tools:text="Mx2012...1a21" />
     </androidx.cardview.widget.CardView>
 
+    <!--    RECIPIENT-->
     <androidx.cardview.widget.CardView
         android:id="@+id/address_input_container"
         style="@style/CardInput"
@@ -281,12 +291,14 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!--    COIN-->
     <androidx.cardview.widget.CardView
         android:id="@+id/coin_input_container"
         style="@style/CardInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
         android:descendantFocusability="beforeDescendants"
         android:minWidth="100dp"
         app:layout_constraintEnd_toStartOf="@id/amount_input_container"
@@ -344,6 +356,7 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!--    AMOUNT-->
     <androidx.cardview.widget.CardView
         android:id="@+id/amount_input_container"
         style="@style/CardInput"
@@ -351,6 +364,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_edges_half"
         android:layout_marginTop="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
         android:clickable="false"
         android:focusable="false"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
@@ -413,6 +427,7 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!--    ERROR CONTAINER-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/error_container"
         android:layout_width="0dp"
@@ -462,6 +477,7 @@
         android:id="@+id/bip_progress"
         android:layout_width="34dp"
         android:layout_height="34dp"
+        android:animateLayoutChanges="true"
         android:background="@color/transparent"
         android:visibility="invisible"
         app:color="@color/white"
@@ -478,22 +494,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
         android:text="OK"
         android:textSize="@dimen/text_size_default"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
         app:layout_constraintTop_toBottomOf="@id/fragment_container" />
-
-    <!--    <FrameLayout-->
-    <!--        android:id="@+id/container"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/account_button"-->
-    <!--        android:layout_marginTop="@dimen/margin_edges"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

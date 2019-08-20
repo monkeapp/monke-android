@@ -46,8 +46,10 @@ import io.monke.app.internal.helpers.ViewHelper;
 import io.monke.app.internal.views.widgets.BipCircleImageView;
 import io.monke.app.storage.AccountItem;
 import io.monke.app.storage.AddressAccount;
+import io.monke.app.tx.TxHandler;
 import io.monke.app.tx.TxSendHandler;
 import network.minter.blockchain.models.TransactionSendResult;
+import network.minter.blockchain.models.operational.OperationType;
 import network.minter.core.MinterSDK;
 import network.minter.core.crypto.MinterAddress;
 import network.minter.explorer.MinterExplorerApi;
@@ -56,6 +58,7 @@ import network.minter.profile.MinterProfileApi;
 import timber.log.Timber;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
+import static io.monke.app.internal.helpers.MathHelper.bdGTE;
 import static io.monke.app.internal.helpers.MathHelper.bdHuman;
 import static io.monke.app.internal.helpers.MathHelper.bdNull;
 
@@ -108,6 +111,10 @@ public class SendScreen extends BaseScreen {
 
     private int mOkInputColor;
     private int mErrorInputColor;
+
+    public boolean enoughBananaToAvoidFee() {
+        return bdGTE(getKeyboard().getBananaAccount().get().getBalance(), TxHandler.MIN_BANANA_ACC);
+    }
 
     @Override
     protected void onInit(MonkeKeyboard keyboard, View rootView) {
@@ -251,6 +258,8 @@ public class SendScreen extends BaseScreen {
         });
         buttonCopy.setOnClickListener(this::tryToPasteMinterAddressFromCB);
         submit.setOnClickListener(this::startExecuteTransaction);
+
+        feeValue.setVisibility(View.VISIBLE);
     }
 
     private void startExecuteTransaction(View view) {
@@ -281,7 +290,10 @@ public class SendScreen extends BaseScreen {
             return;
         }
 
-//        tx.buyBananaIfNecessary(tx.getAmount(), getKeyboard().getBananaAccount().get().getBalance());
+        tx.buyBananaIfNecessary(tx.getAmount(), getKeyboard().getBananaAccount().get().getBalance())
+                .subscribe(res -> {
+                    Timber.d("Banana successfully bought");
+                }, Timber::e);
 
         getKeyboard().showProgress(false);
         mInputGroup.clearFields();
@@ -320,9 +332,19 @@ public class SendScreen extends BaseScreen {
     }
 
     private void onUpdateAccount(AddressAccount account) {
-        tx.setAccount(account.getFirstAccountItem());
+        tx.setAccount(account.findByCoin(MinterSDK.DEFAULT_COIN));
         updateCoins(account.getAccountsItems());
         setAvailable(account.getTotalBalance());
+
+        CharSequence cs;
+
+        if (enoughBananaToAvoidFee()) {
+            cs = getContext().getString(R.string.fee_text_base, bdHuman(OperationType.SendCoin.getFee()), MinterSDK.DEFAULT_COIN);
+        } else {
+            cs = (getContext().getString(R.string.fee_text_banana, bdHuman(OperationType.SendCoin.getFee()), MinterSDK.DEFAULT_COIN));
+        }
+        Timber.d("Fee value: %s", cs);
+        feeValue.setText(cs);
     }
 
     private void clearWidgetFocus() {
@@ -419,6 +441,7 @@ public class SendScreen extends BaseScreen {
             return;
         }
         inputAmount.setText(bdHuman(tx.getAccount().get().getBalance()));
+        tx.setAmount(tx.getAccount().get().getBalance());
     }
 
 

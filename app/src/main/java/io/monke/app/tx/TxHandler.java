@@ -6,6 +6,7 @@ import com.annimon.stream.Stream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import io.monke.app.BuildConfig;
 import io.monke.app.internal.common.Lazy;
 import io.monke.app.internal.data.data.CachedRepository;
 import io.monke.app.storage.AccountItem;
@@ -21,6 +22,17 @@ import network.minter.explorer.repo.GateTransactionRepository;
 import static io.monke.app.apis.reactive.ReactiveGate.rxGate;
 
 public class TxHandler {
+
+    public static final BigDecimal MIN_BANANA_ACC;
+
+    static {
+        //noinspection ConstantConditions
+        if (BuildConfig.BANANA_COIN.equals("BANANATEST")) {
+            MIN_BANANA_ACC = new BigDecimal("133220");
+        } else {
+            MIN_BANANA_ACC = BigDecimal.ONE;
+        }
+    }
 
     private final GateEstimateRepository mEstimateRepo;
     private final GateGasRepository mGasRepo;

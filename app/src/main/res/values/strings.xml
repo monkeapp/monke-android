@@ -53,4 +53,6 @@
 
     <string name="sent_share_title_light"><![CDATA[<font color=#5124C5>Monke Sent!</font> <font color=#50555C>Share:</font>]]></string>
     <string name="sent_share_title_dark"><![CDATA[<font color=#ffffff>Monke Sent!</font> <font color=#ACB4BE>Share:</font>]]></string>
+    <string name="fee_text_base" formatted="false">Fee %s %s</string>
+    <string name="fee_text_banana" formatted="false">Fee 1%% to Banana + %s %s</string>
 </resources>

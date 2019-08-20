@@ -143,7 +143,7 @@ public final class MathHelper {
     }
 
     public static BigDecimal bdMin(BigDecimal a, BigDecimal b) {
-        if (bdGT(a, b)) {
+        if (bdGT(a.setScale(18), b.setScale(18))) {
             return b;
         }
 
@@ -151,7 +151,7 @@ public final class MathHelper {
     }
 
     public static BigDecimal bdMax(BigDecimal a, BigDecimal b) {
-        if (bdGTE(a, b)) {
+        if (bdGTE(a.setScale(18), b.setScale(18))) {
             return a;
         }
 
