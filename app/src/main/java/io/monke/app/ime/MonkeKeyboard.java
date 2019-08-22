@@ -17,7 +17,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.preference.PreferenceManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
@@ -85,7 +84,7 @@ public class MonkeKeyboard extends InputMethodService {
 
     @Override
     public void onCreate() {
-        final SharedPreferences defPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences defPrefs = getSharedPreferences(getString(R.string.user_local_settings_key), Context.MODE_PRIVATE);
         setTheme(defPrefs.getBoolean(PrefKeys.DAY_NIGHT_THEME, false) ? R.style.KB_Dark : R.style.KB_Light);
         super.onCreate();
         AndroidInjection.inject(this);

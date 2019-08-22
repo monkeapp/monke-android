@@ -133,11 +133,12 @@ public class MultiRowAdapter extends RecyclerView.Adapter<MultiRowAdapter.RowVie
         notifyItemRangeInserted(0, target.size());
     }
 
+
     @SuppressWarnings("Convert2MethodRef")
-    public void addRows(Collection<MultiRowContract.Row> rows) {
+    public <V extends MultiRowAdapter.RowViewHolder, T extends MultiRowContract.Row<V>> void addRows(Collection<T> rows) {
         if (rows.isEmpty()) return;
 
-        final List<MultiRowContract.Row> target = Stream.of(rows)
+        final List<T> target = Stream.of(rows)
                 .filter(item -> item != null)
                 .filter(MultiRowContract.Row::isVisible)
                 .toList();

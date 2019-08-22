@@ -1,23 +1,38 @@
 package io.monke.app.settings.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.monke.app.R;
 import io.monke.app.internal.BaseMvpInjectActivity;
+import io.monke.app.internal.helpers.IntentHelper;
+import io.monke.app.internal.views.list.BorderedItemSeparator;
 import io.monke.app.settings.contract.SettingsView;
 import io.monke.app.settings.views.SettingsPresenter;
 import io.monke.app.setup.ui.DepositBottomDialog;
+import io.monke.app.splash.ui.SplashActivity;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 import network.minter.core.MinterSDK;
@@ -29,7 +44,7 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     @Inject Provider<SettingsPresenter> presenterProvider;
     @InjectPresenter SettingsPresenter presenter;
     @BindView(R.id.toolbar) Toolbar toolbar;
-    private Fragment mFragment;
+    @BindView(R.id.list) RecyclerView list;
     private DepositBottomDialog mDialog;
 
     @Override
@@ -40,6 +55,63 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     @Override
     public void setDelegatedBalance(BigDecimal delegatedAmount) {
         toolbar.setSubtitle(String.format("%s %s", bdHuman(delegatedAmount), MinterSDK.DEFAULT_COIN));
+    }
+
+    @Override
+    public void setAdapter(RecyclerView.Adapter<?> adapter) {
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.addItemDecoration(new BorderedItemSeparator(this, R.drawable.shape_bottom_separator, false, false));
+        list.setAdapter(adapter);
+    }
+
+    @Override
+    public void startRateApp() {
+        final String appPackageName = getPackageName(); // getPackageName() place Context or Activity object
+        try {
+            startActivity(new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + appPackageName)
+            ));
+        } catch (ActivityNotFoundException ex) {
+            // если вдруг стора нет в телефоне
+            startActivity(new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)
+            ));
+        }
+    }
+
+    @Override
+    public void startBackup() {
+        startActivity(new Intent(this, BackupSeedActivity.class));
+    }
+
+    @Override
+    public void startAbout() {
+        startActivity(IntentHelper.newUrl("https://monke.io"));
+    }
+
+    @Override
+    public void startTelegram() {
+        startActivity(IntentHelper.newUrl("https://t.me/MonkeApp"));
+    }
+
+    @Override
+    public void restartApplication() {
+        Toast.makeText(this, "Restarting application in 1 second to apply new theme", Toast.LENGTH_LONG).show();
+
+        Observable.timer(1, TimeUnit.SECONDS)
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(res -> {
+                    Intent mStartActivity = new Intent(this, SplashActivity.class);
+                    int mPendingIntentId = 123456;
+                    PendingIntent mPendingIntent = PendingIntent.getActivity(this, mPendingIntentId, mStartActivity,
+                            PendingIntent.FLAG_CANCEL_CURRENT);
+                    AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                    System.exit(0);
+                });
     }
 
     @Override
@@ -81,14 +153,6 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
 
             return false;
         });
-
-        mFragment = new SettingsFragment();
-
-        // Display the fragment as the main content.
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.prefs_container, mFragment)
-                .commit();
-
     }
 
     @Override
