@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -207,7 +209,25 @@ public class MonkeKeyboard extends InputMethodService {
         if (show) {
             submit.setText(null);
         }
+
+        if (show) {
+            RotateAnimation rotate = new RotateAnimation(
+                    0, 360,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f
+            );
+
+            rotate.setDuration(600);
+            rotate.setRepeatCount(Animation.INFINITE);
+
+            progress.startAnimation(rotate);
+        } else {
+            progress.clearAnimation();
+            progress.setAnimation(null);
+        }
+
         progress.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+
     }
 
     @Override

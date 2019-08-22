@@ -483,18 +483,18 @@
         app:layout_constraintTop_toBottomOf="@id/fragment_container"
         android:animateLayoutChanges="true">
 
-        <io.monke.app.internal.views.widgets.ColoredProgressBar
+        <ImageView
             android:id="@+id/bip_progress"
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:background="@color/transparent"
-
+            android:src="@drawable/img_big_banana"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:elevation="2dp"
             android:translationZ="1dp"
             android:visibility="invisible"
-            app:color="@color/white"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias=".5"
