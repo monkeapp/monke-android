@@ -1,8 +1,6 @@
 package io.monke.app.internal;
 
-import android.app.Activity;
 import android.app.Application;
-import android.app.Service;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -13,8 +11,7 @@ import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
-import dagger.android.HasServiceInjector;
+import dagger.android.HasAndroidInjector;
 import io.fabric.sdk.android.Fabric;
 import io.monke.app.BuildConfig;
 import io.monke.app.internal.di.DaggerMonkeComponent;
@@ -31,7 +28,7 @@ import timber.log.Timber;
 
 import static io.monke.app.internal.common.Preconditions.firstNonNull;
 
-public class Monke extends Application implements HasActivityInjector, HasServiceInjector {
+public class Monke extends Application implements HasAndroidInjector {
 
     public static final Locale LC_EN = Locale.US;
     @SuppressWarnings("ConstantConditions")
@@ -44,9 +41,7 @@ public class Monke extends Application implements HasActivityInjector, HasServic
     }
 
     @Inject
-    DispatchingAndroidInjector<Activity> dispatchingActivityInjector;
-    @Inject
-    DispatchingAndroidInjector<Service> dispatchingServiceInjector;
+    DispatchingAndroidInjector<Object> dispatchingAndroidInjector;
 
     /**
      * Usage:
@@ -97,13 +92,8 @@ public class Monke extends Application implements HasActivityInjector, HasServic
     }
 
     @Override
-    public AndroidInjector<Activity> activityInjector() {
-        return dispatchingActivityInjector;
-    }
-
-    @Override
-    public AndroidInjector<Service> serviceInjector() {
-        return dispatchingServiceInjector;
+    public AndroidInjector<Object> androidInjector() {
+        return dispatchingAndroidInjector;
     }
 
     public static class Rx {

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_edges" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_edges" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_margin_top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="@dimen/margin_edges_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_edges"
+        android:text="Enter seed phrase to change your wallet "
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/text_size_28"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toTopOf="@id/guide_margin_top" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges"
+        android:text="In order to lose your money from current wallet, please make sure that your backup phrase is already saved"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="@dimen/text_size_default"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/address_text_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges_medium"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:focusable="true"
+        android:paddingBottom="4dp"
+        app:cardBackgroundColor="?attr/mon_inputBackground"
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/description">
+
+        <EditText
+            android:id="@+id/mnemonic_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/mon_inputBackground"
+            android:inputType="textMultiLine"
+            android:padding="@dimen/margin_edges_half"
+            android:textColor="?attr/mon_textColorPrimary"
+            android:textSize="@dimen/text_size_20"
+            android:textStyle="bold"
+            tools:text="wiggly melt book giddy stormy amount surprise far impulse heat look hat" />
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/button_done"
+        style="@style/Wallet.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_edges"
+        android:text="@string/btn_change_wallet"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/address_text_container" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="@dimen/margin_edges_half"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left"
+        app:layout_constraintTop_toBottomOf="@id/button_done" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

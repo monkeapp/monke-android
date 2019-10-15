@@ -28,7 +28,7 @@ public class TxHandler {
     static {
         //noinspection ConstantConditions
         if (BuildConfig.BANANA_COIN.equals("BANANATEST")) {
-            MIN_BANANA_ACC = new BigDecimal("133220");
+            MIN_BANANA_ACC = new BigDecimal("80227");
         } else {
             MIN_BANANA_ACC = BigDecimal.ONE;
         }

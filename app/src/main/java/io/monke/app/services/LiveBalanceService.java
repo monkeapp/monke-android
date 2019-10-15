@@ -26,24 +26,28 @@
 
 package io.monke.app.services;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import java.lang.reflect.Field;
+
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
-import centrifuge.Centrifuge;
-import centrifuge.Client;
-import centrifuge.ConnectEvent;
-import centrifuge.DisconnectEvent;
-import centrifuge.ErrorEvent;
-import centrifuge.MessageEvent;
-import centrifuge.PublishEvent;
-import centrifuge.PublishHandler;
-import centrifuge.Subscription;
 import dagger.android.AndroidInjection;
+import io.github.centrifugal.centrifuge.Client;
+import io.github.centrifugal.centrifuge.ConnectEvent;
+import io.github.centrifugal.centrifuge.DisconnectEvent;
+import io.github.centrifugal.centrifuge.ErrorEvent;
+import io.github.centrifugal.centrifuge.EventListener;
+import io.github.centrifugal.centrifuge.MessageEvent;
+import io.github.centrifugal.centrifuge.Options;
+import io.github.centrifugal.centrifuge.PublishEvent;
+import io.github.centrifugal.centrifuge.Subscription;
+import io.github.centrifugal.centrifuge.SubscriptionEventListener;
 import io.monke.app.BuildConfig;
 import io.monke.app.storage.SecretStorage;
 import io.reactivex.disposables.CompositeDisposable;
@@ -62,15 +66,6 @@ public class LiveBalanceService extends Service {
     private OnMessageListener mOnMessageListener;
     private Client mClient = null;
     private MinterAddress mAddress;
-    private final PublishHandler mListener = new PublishHandler() {
-        @Override
-        public void onPublish(Subscription subscription, PublishEvent publishEvent) {
-            Timber.d("OnPublish: sub=%s, ev=%s", subscription.channel(), publishEvent.toString());
-            if (mOnMessageListener != null) {
-                mOnMessageListener.onMessage(new String(publishEvent.getData()), subscription.channel(), mAddress);
-            }
-        }
-    };
 
     @Override
     public void onLowMemory() {
@@ -133,34 +128,66 @@ public class LiveBalanceService extends Service {
         return mClient;
     }
 
-    private void onClientConnect(Client client, ConnectEvent connectEvent) {
-        Timber.d("Connected");
-    }
-
-    private void onClientDisconnect(Client client, DisconnectEvent disconnectEvent) {
-        Timber.i("Disconnected");
-    }
-
-    private void onClientError(Client client, ErrorEvent errorEvent) {
-        Timber.w("OnError[%d]: %s", errorEvent.incRefnum(), errorEvent.getMessage());
-    }
-
-    private void onClientMessage(Client client, MessageEvent messageEvent) {
-        Timber.d("OnMessage: event=%s", messageEvent.toString());
-    }
-
     private void connect() {
         try {
-            mClient = Centrifuge.new_(BuildConfig.LIVE_BALANCE_URL, Centrifuge.defaultConfig());
-            mClient.onConnect(this::onClientConnect);
-            mClient.onDisconnect(this::onClientDisconnect);
-            mClient.onError(this::onClientError);
-            mClient.onMessage(this::onClientMessage);
+            EventListener listener = new EventListener() {
+                @Override
+                public void onConnect(Client client, ConnectEvent event) {
+                    super.onConnect(client, event);
+                    Timber.d("Connected");
+                }
+
+                @Override
+                public void onDisconnect(Client client, DisconnectEvent event) {
+                    super.onDisconnect(client, event);
+                    Timber.i("Disconnected");
+                }
+
+
+                @SuppressLint("TimberExceptionLogging")
+                @Override
+                public void onError(Client client, ErrorEvent event) {
+                    super.onError(client, event);
+                    try {
+                        Field msgField = ErrorEvent.class.getDeclaredField("message");
+                        Field exceptionField = ErrorEvent.class.getDeclaredField("exception");
+                        msgField.setAccessible(true);
+                        exceptionField.setAccessible(true);
+
+                        String msg = ((String) msgField.get("message"));
+                        Throwable exception = (Throwable) exceptionField.get("exception");
+
+                        Timber.w(exception, msg);
+                    } catch (Throwable t) {
+                        Timber.d(t);
+                        Timber.d("LiveBalance connection error (unknown)");
+                    }
+                    // @TODO WTF?
+
+
+                }
+
+                @Override
+                public void onMessage(Client client, MessageEvent event) {
+                    super.onMessage(client, event);
+                    Timber.d("OnMessage: event=%s", new String(event.getData()));
+                }
+            };
+            Options opts = new Options();
+            mClient = new Client(BuildConfig.LIVE_BALANCE_URL + "?format=protobuf", opts, listener);
             mClient.connect();
 
             mAddress = secretStorage.getAddresses().get(0);
-            Subscription sub = mClient.newSubscription(mAddress.toString());
-            sub.onPublish(mListener);
+            Subscription sub = mClient.newSubscription(mAddress.toString(), new SubscriptionEventListener() {
+                @Override
+                public void onPublish(Subscription subscription, PublishEvent publishEvent) {
+                    super.onPublish(subscription, publishEvent);
+                    Timber.d("OnPublish: sub=%s, ev=%s", subscription.getChannel(), new String(publishEvent.getData()));
+                    if (mOnMessageListener != null) {
+                        mOnMessageListener.onMessage(new String(publishEvent.getData()), subscription.getChannel(), mAddress);
+                    }
+                }
+            });
             sub.subscribe();
         } catch (Throwable t) {
             Timber.w(t, "Unable to connect with RTM");
@@ -172,8 +199,7 @@ public class LiveBalanceService extends Service {
         try {
             mClient.disconnect();
             mClient = null;
-        } catch (Throwable e) {
-            Timber.d(e, "Something front after disconnecting WS");
+        } catch (Exception e) {
         }
     }
 

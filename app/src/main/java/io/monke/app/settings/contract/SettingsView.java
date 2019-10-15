@@ -1,9 +1,15 @@
 package io.monke.app.settings.contract;
 
+import android.content.Intent;
+import android.text.Spanned;
+
 import java.math.BigDecimal;
 
 import androidx.recyclerview.widget.RecyclerView;
+import io.monke.app.setup.ui.ChangeWalletBottomDialog;
 import moxy.MvpView;
+import moxy.viewstate.strategy.OneExecutionStateStrategy;
+import moxy.viewstate.strategy.StateStrategyType;
 
 public interface SettingsView extends MvpView {
     void setBalance(BigDecimal totalBalance);
@@ -14,4 +20,13 @@ public interface SettingsView extends MvpView {
     void startAbout();
     void startTelegram();
     void restartApplication();
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startDonationDialog(Spanned title, String address, String qrPath);
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startTransactionsList(String address);
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startChangeWalletDialog(ChangeWalletBottomDialog.OnWalletChangedListener listener);
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startIntent(Intent intent);
 }

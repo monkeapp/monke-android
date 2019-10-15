@@ -114,8 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:tag="."
-            android:text=","
-            />
+            android:text="." />
 
         <TextView
             style="@style/KB_NumKey"

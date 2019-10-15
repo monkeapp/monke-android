@@ -2,6 +2,7 @@ package io.monke.app.ime;
 
 import android.view.KeyEvent;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,16 @@ public abstract class KeypadHandler {
         setOnKeyListener((type, value) -> {
             CharSequence src = firstNonNull(editText.getText(), "");
             String txt = src.toString();
+
+            if ((editText.getInputType() & EditorInfo.TYPE_NUMBER_FLAG_DECIMAL) != 0) {
+                if (value != null && value.equals(".")) {
+                    if (txt.contains(".")) {
+                        return;
+                    } else if (editText.getSelectionStart() == 0) {
+                        value = "0.";
+                    }
+                }
+            }
 
             int inputPos = editText.getSelectionStart();//txt.length();
 

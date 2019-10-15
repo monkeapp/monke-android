@@ -28,7 +28,6 @@ package io.monke.app.internal;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -42,8 +41,7 @@ import androidx.appcompat.widget.Toolbar;
 import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasFragmentInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.HasAndroidInjector;
 import io.monke.app.BuildConfig;
 import io.monke.app.R;
 import io.monke.app.internal.mvp.ErrorView;
@@ -60,22 +58,11 @@ import static io.monke.app.internal.common.Preconditions.checkNotNull;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 @SuppressLint("Registered")
-public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFragmentInjector, HasSupportFragmentInjector, ErrorView, ErrorViewWithRetry, ProgressTextView {
+public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasAndroidInjector, ErrorView, ErrorViewWithRetry, ProgressTextView {
 
     @Inject
-    DispatchingAndroidInjector<Fragment> fragmentInjector;
-    @Inject
-    DispatchingAndroidInjector<androidx.fragment.app.Fragment> supportFragmentInjector;
+    DispatchingAndroidInjector<Object> androidInjector;
 
-    @Override
-    public AndroidInjector<Fragment> fragmentInjector() {
-        return fragmentInjector;
-    }
-
-    @Override
-    public AndroidInjector<androidx.fragment.app.Fragment> supportFragmentInjector() {
-        return supportFragmentInjector;
-    }
 
     @VisibleForTesting
     public void prepareIdlingResources() {
@@ -198,6 +185,11 @@ public class BaseMvpInjectActivity extends MvpAppCompatActivity implements HasFr
 
 //		mProgress.dismiss();
 //		mProgress = null;
+    }
+
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return androidInjector;
     }
 
 //    protected void setupStatusView(final StatusView statusView) {

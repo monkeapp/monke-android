@@ -282,7 +282,7 @@ public class TxSendHandler extends TxHandler {
                                 .setCoinToBuy(BuildConfig.BANANA_COIN)
                                 .setCoinToSell(mFromAccount.getCoin())
                                 .setValueToSell(toSell)
-                                .setMinValueToBuy(0)
+                                .setMinValueToBuy("0")
                                 .build();
 
                         final SecretData data = secretStorage.getSecret(mFromAccount.address);

@@ -37,6 +37,7 @@ import io.monke.app.services.LiveBalanceService;
 import io.monke.app.settings.ui.BackupSeedActivity;
 import io.monke.app.settings.ui.SettingsActivity;
 import io.monke.app.settings.ui.SettingsFragment;
+import io.monke.app.setup.ui.ChangeWalletBottomDialog;
 import io.monke.app.setup.ui.DepositBottomDialog;
 import io.monke.app.setup.ui.SetupActivity;
 import io.monke.app.splash.ui.SplashActivity;
@@ -72,6 +73,10 @@ public interface InjectorsModule {
     @ContributesAndroidInjector
     @FragmentScope
     DepositBottomDialog depositFragmentInjector();
+
+    @ContributesAndroidInjector
+    @FragmentScope
+    ChangeWalletBottomDialog changeWalletFragmentInjector();
 
     @ContributesAndroidInjector
     @FragmentScope

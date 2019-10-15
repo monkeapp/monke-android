@@ -7,9 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +31,7 @@ import io.monke.app.internal.helpers.IntentHelper;
 import io.monke.app.internal.views.list.BorderedItemSeparator;
 import io.monke.app.settings.contract.SettingsView;
 import io.monke.app.settings.views.SettingsPresenter;
+import io.monke.app.setup.ui.ChangeWalletBottomDialog;
 import io.monke.app.setup.ui.DepositBottomDialog;
 import io.monke.app.splash.ui.SplashActivity;
 import io.reactivex.Observable;
@@ -36,6 +40,7 @@ import io.reactivex.schedulers.Schedulers;
 import moxy.presenter.InjectPresenter;
 import moxy.presenter.ProvidePresenter;
 import network.minter.core.MinterSDK;
+import network.minter.explorer.MinterExplorerApi;
 
 import static io.monke.app.internal.helpers.MathHelper.bdHuman;
 
@@ -45,7 +50,7 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     @InjectPresenter SettingsPresenter presenter;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.list) RecyclerView list;
-    private DepositBottomDialog mDialog;
+    private BottomSheetDialogFragment mDialog;
 
     @Override
     public void setBalance(BigDecimal totalBalance) {
@@ -112,6 +117,50 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
                     mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
                     System.exit(0);
                 });
+    }
+
+    @Override
+    public void startDonationDialog(Spanned title, String address, String qrPath) {
+        if (mDialog != null) {
+            try {
+                mDialog.dismiss();
+            } catch (Throwable ignore) {
+            }
+            mDialog = null;
+        }
+
+        mDialog = new DepositBottomDialog.Builder(false)
+                .setTitle(title)
+                .setAddress(address)
+                .setQRPath(qrPath)
+                .setShowAddressIcon(true)
+                .build();
+
+        mDialog.show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void startTransactionsList(String address) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MinterExplorerApi.FRONT_URL + "/address/" + address + "?active_tab=tx")));
+    }
+
+    @Override
+    public void startChangeWalletDialog(ChangeWalletBottomDialog.OnWalletChangedListener listener) {
+        if (mDialog != null) {
+            try {
+                mDialog.dismiss();
+            } catch (Throwable ignore) {
+            }
+            mDialog = null;
+        }
+        mDialog = ChangeWalletBottomDialog.newInstance();
+        ((ChangeWalletBottomDialog) mDialog).setOnWalletChangedListener(listener);
+        mDialog.show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void startIntent(Intent intent) {
+        startActivity(intent);
     }
 
     @Override

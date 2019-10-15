@@ -84,19 +84,44 @@
         app:layout_constraintTop_toBottomOf="@id/qr"
         >
 
-        <TextView
-            android:id="@+id/address_text"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:background="?attr/mon_inputBackground"
-            android:clickable="false"
-            android:focusable="false"
-            android:gravity="center"
-            android:paddingStart="@dimen/margin_edges_half"
-            android:paddingEnd="@dimen/margin_edges_half"
-            android:textColor="?attr/mon_textColorPrimary"
-            android:textSize="@dimen/text_size_14"
-            tools:text="Mx5832afb50c505b6b2bd40351996aea0b5b5eae8e"/>
+            android:layout_height="wrap_content">
+
+            <io.monke.app.internal.views.widgets.BipCircleImageView
+                android:id="@+id/address_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="@dimen/margin_edges_half"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_make_donation"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone" />
+
+            <TextView
+                android:id="@+id/address_text"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="@dimen/margin_edges_half"
+                android:background="?attr/mon_inputBackground"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/margin_edges_half"
+                android:textColor="?attr/mon_textColorPrimary"
+                android:textSize="@dimen/text_size_14"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/address_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="0dp"
+                tools:text="Mx5832afb50c505b6b2bd40351996aea0b5b5eae8e" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.cardview.widget.CardView>
 

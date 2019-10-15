@@ -142,6 +142,11 @@ public class SecretStorage {
         }
 
         secrets.remove(address);
+
+        List<MinterAddress> addresses = mStorage.get(KEY_ADDRESSES);
+        addresses.remove(address);
+        mStorage.put(KEY_ADDRESSES, addresses);
+
     }
 
     public Map<String, SecretData> getSecrets() {

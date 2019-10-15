@@ -22,6 +22,8 @@
     <string name="btn_copy">Copy to clipboard</string>
     <string name="btn_done">Done</string>
 
+    <string name="settings_transactions_list">Transactions 💸</string>
+    <string name="settings_change_wallet">Change 👛 wallet</string>
     <string name="settings_backup_mnemonic">🔑 Backup Phrase</string>
     <string name="settings_report_problem">Report 🙈 problem</string>
     <string name="settings_rate_app">Rate Monke 💜 in Play Market</string>
@@ -35,6 +37,7 @@
     <string name="settings_about_desc">Monke.io</string>
 
     <string name="deposit_title"><![CDATA[Send some money to your <font color=#5124c5>Monke</font>]]></string>
+    <string name="deposit_donate_title">Make a 🍩 donation to Monke</string>
     <string name="deposit_field_address">Use this address</string>
 
     <string name="title_backup">Backup Phrase</string>
@@ -55,4 +58,5 @@
     <string name="sent_share_title_dark"><![CDATA[<font color=#ffffff>Monke Sent!</font> <font color=#ACB4BE>Share:</font>]]></string>
     <string name="fee_text_base" formatted="false">Fee %s %s</string>
     <string name="fee_text_banana" formatted="false">Fee 1%% to Banana + %s %s</string>
+    <string name="btn_change_wallet">Change Wallet</string>
 </resources>
