@@ -4,6 +4,11 @@ public class ShareItem {
 
     public String title;
     public String meta;
+    private boolean isBackspace = false;
+
+    public ShareItem() {
+        isBackspace = true;
+    }
 
     public ShareItem(String title) {
         this.title = title;

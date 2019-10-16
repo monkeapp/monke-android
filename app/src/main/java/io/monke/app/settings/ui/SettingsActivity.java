@@ -1,6 +1,7 @@
 package io.monke.app.settings.ui;
 
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -71,7 +73,7 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
 
     @Override
     public void startRateApp() {
-        final String appPackageName = getPackageName(); // getPackageName() place Context or Activity object
+        final String appPackageName = getPackageName();
         try {
             startActivity(new Intent(
                     Intent.ACTION_VIEW,
@@ -87,7 +89,16 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     }
 
     @Override
-    public void startBackup() {
+    public void startBackup(int requestCode) {
+        KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        if (km == null) return;
+
+        Intent authIntent = km.createConfirmDeviceCredentialIntent("Backup Seed", "Please, confirm that this is your device");
+        startActivityForResult(authIntent, requestCode);
+    }
+
+    @Override
+    public void startBackupView() {
         startActivity(new Intent(this, BackupSeedActivity.class));
     }
 
@@ -182,6 +193,12 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     @ProvidePresenter
     SettingsPresenter providePresenter() {
         return presenterProvider.get();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        presenter.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

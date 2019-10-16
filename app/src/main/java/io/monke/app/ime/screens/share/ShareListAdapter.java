@@ -8,6 +8,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -15,11 +16,24 @@ import butterknife.ButterKnife;
 import io.monke.app.R;
 import timber.log.Timber;
 
-public class ShareListAdapter extends RecyclerView.Adapter<ShareListAdapter.ViewHolder> {
+public class ShareListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<ShareItem> mItems = new ArrayList<>();
     private LayoutInflater mInflater;
     private OnClickListener mListener;
+    private View.OnClickListener mOnBackspaceClickListener;
+    private View.OnLongClickListener mOnBackspaceLongClickListener;
+
+    private enum ViewType {
+        Share(R.layout.item_share),
+        Backspace(R.layout.item_share_bsp);
+
+        int v;
+
+        ViewType(@LayoutRes int layout) {
+            v = layout;
+        }
+    }
 
     public void setOnItemClickListener(OnClickListener listener) {
         mListener = listener;
@@ -29,45 +43,86 @@ public class ShareListAdapter extends RecyclerView.Adapter<ShareListAdapter.View
         mItems = items;
     }
 
+    public List<ShareItem> getItems() {
+        return mItems;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position == mItems.size() ? ViewType.Backspace.ordinal() : ViewType.Share.ordinal();
+    }
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (mInflater == null) {
             mInflater = LayoutInflater.from(parent.getContext());
         }
 
-        View view = mInflater.inflate(R.layout.item_share, parent, false);
+        View view;
+        if (viewType == ViewType.Share.ordinal()) {
+            view = mInflater.inflate(ViewType.Share.v, parent, false);
+            return new ShareViewHolder(view);
+        } else {
+            view = mInflater.inflate(ViewType.Backspace.v, parent, false);
+            return new BackspaceViewHolder(view);
+        }
+    }
 
-        return new ViewHolder(view);
+    public void enableBackspace(View.OnClickListener listener, View.OnLongClickListener longListener) {
+        mOnBackspaceClickListener = listener;
+        mOnBackspaceLongClickListener = longListener;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final ShareItem item = mItems.get(holder.getAdapterPosition());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (position == mItems.size()) {
+            BackspaceViewHolder vh = ((BackspaceViewHolder) holder);
+            vh.itemView.setOnClickListener(v -> {
+                if (mOnBackspaceClickListener != null) {
+                    mOnBackspaceClickListener.onClick(v);
+                }
+            });
+            vh.itemView.setOnLongClickListener(v -> {
+                if (mOnBackspaceLongClickListener != null) {
+                    return mOnBackspaceLongClickListener.onLongClick(v);
+                }
 
-        Timber.d("Share item handle %d", position);
-        holder.title.setText(item.title);
-        holder.itemView.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onClick(v, mItems.get(holder.getAdapterPosition()));
-            }
-        });
+                return false;
+            });
+        } else {
+            final ShareItem item = mItems.get(holder.getAdapterPosition());
+            ShareViewHolder vh = ((ShareViewHolder) holder);
+            Timber.d("Share item handle %d", position);
+            vh.title.setText(item.title);
+            vh.itemView.setOnClickListener(v -> {
+                if (mListener != null) {
+                    mListener.onClick(v, mItems.get(holder.getAdapterPosition()));
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mOnBackspaceClickListener != null ? mItems.size() + 1 : mItems.size();
     }
 
     public interface OnClickListener {
         void onClick(View view, ShareItem item);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class BackspaceViewHolder extends RecyclerView.ViewHolder {
+        public BackspaceViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+
+    public static class ShareViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.title) TextView title;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ShareViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

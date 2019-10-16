@@ -22,6 +22,7 @@ import com.google.android.flexbox.JustifyContent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,6 +161,76 @@ public class SendScreen extends BaseScreen {
                 String val = item.meta != null ? item.meta : item.title;
                 val += " ";
                 inputConnection.commitText(val, val.length());
+            });
+            mShareListAdapter.enableBackspace(v -> {
+                InputConnection inputConnection = getKeyboard().getCurrentInputConnection();
+                CharSequence inputTmp = inputConnection.getSelectedText(0);
+
+                int maxPatternLen = Stream.of(mShareListAdapter.getItems()).map(item -> {
+                    if (item.meta != null && !item.meta.isEmpty()) {
+                        return item.meta.length();
+                    }
+
+                    return item.title.length();
+                }).max((o1, o2) -> o1.compareTo(o2)).get();
+                final List<String> shares = Stream.of(mShareListAdapter.getItems()).map(item -> {
+                    if (item.meta != null && !item.meta.isEmpty()) {
+                        return item.meta;
+                    }
+
+                    return item.title;
+                }).toList();
+
+                String src = inputConnection.getTextBeforeCursor(maxPatternLen, 0).toString();
+                if (src.isEmpty()) {
+                    return;
+                }
+
+                int pos = src.length() - 1;
+                Stack<String> stack = new Stack<>();
+                int toRemove = 0;
+                for (; pos >= 0; pos--) {
+                    // adding to stack last symbol
+                    stack.push(src.substring(pos, pos + 1));
+                    StringBuilder tmp = new StringBuilder();
+                    // copy stack buffer to local scope to to build with it StringBuilder
+                    Stack<String> cp = ((Stack<String>) stack.clone());
+                    while (!cp.isEmpty()) {
+                        tmp.append(cp.pop());
+                    }
+
+                    final String test = tmp.toString();
+                    for (String item : shares) {
+
+                        if (test.length() >= item.length() && test.equals(item)) {
+                            pos = 0;
+                            stack.clear();
+                            toRemove = item.length();
+                            break;
+
+                        }
+                    }
+                }
+
+                if (inputTmp == null) {
+                    if (toRemove != 0) {
+                        inputConnection.deleteSurroundingText(toRemove, 0);
+                    } else {
+                        inputConnection.deleteSurroundingText(1, 0);
+                    }
+                } else {
+                    inputConnection.commitText("", 1);
+                }
+            }, v -> {
+                InputConnection inputConnection = getKeyboard().getCurrentInputConnection();
+                CharSequence inputTmp = inputConnection.getSelectedText(0);
+                if (inputTmp != null) {
+                    inputConnection.commitText("", 1);
+                } else {
+                    inputConnection.commitText("", 0);
+                }
+
+                return false;
             });
             shareList.setAdapter(mShareListAdapter);
         }
@@ -308,6 +379,7 @@ public class SendScreen extends BaseScreen {
                 getResources().getString(R.string.share_title_tx, result.result.txHash.toShortString()),
                 MinterExplorerApi.newFrontUrl().addPathSegment("transactions").addPathSegment(result.result.txHash.toString()).toString()
         ));
+//        shareItems.add(new ShareItem());
 
         int stringResTitle = ViewHelper.getResFromStyle(getKeyboard(), R.attr.mon_sent_share_title);
         shareTitle.setText(HtmlCompat.fromHtml(getKeyboard().getString(stringResTitle)));

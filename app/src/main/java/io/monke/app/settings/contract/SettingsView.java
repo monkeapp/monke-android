@@ -16,7 +16,11 @@ public interface SettingsView extends MvpView {
     void setDelegatedBalance(BigDecimal delegatedAmount);
     void setAdapter(RecyclerView.Adapter<?> adapter);
     void startRateApp();
-    void startBackup();
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startBackup(int requestCode);
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startBackupView();
     void startAbout();
     void startTelegram();
     void restartApplication();

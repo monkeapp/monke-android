@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <subtype
-        android:imeSubtypeLocale="en_US"
         android:imeSubtypeMode="keyboard"
         android:settingsActivity=".settings.ui.SettingsActivity"
         android:label="Default"/>
