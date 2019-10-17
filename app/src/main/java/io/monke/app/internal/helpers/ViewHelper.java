@@ -88,6 +88,16 @@ public final class ViewHelper {
         }
     }
 
+    public static void switchViewInvisible(View firstTrue, View secondFalse, boolean cond) {
+        if (cond) {
+            firstTrue.setVisibility(View.VISIBLE);
+            secondFalse.setVisibility(View.INVISIBLE);
+        } else {
+            firstTrue.setVisibility(View.INVISIBLE);
+            secondFalse.setVisibility(View.VISIBLE);
+        }
+    }
+
     public static void switchView(View firstTrue, View secondFalse, boolean cond) {
         if (cond) {
             firstTrue.setVisibility(View.VISIBLE);

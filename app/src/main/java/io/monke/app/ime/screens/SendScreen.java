@@ -74,6 +74,11 @@ public class SendScreen extends BaseScreen {
     @BindView(R.id.share_container) ViewGroup shareContainer;
     @BindView(R.id.address_input_container) ViewGroup addressInputContainer;
     @BindView(R.id.amount_input_container) ViewGroup amountInputContainer;
+    @BindView(R.id.amount_percent_container) ViewGroup amountPercentContainer;
+    @BindView(R.id.action_perc_25) View button25Percent;
+    @BindView(R.id.action_perc_50) View button50Percent;
+    @BindView(R.id.action_perc_75) View button75Percent;
+    @BindView(R.id.action_perc_max) View buttonMaxPercent;
     @BindView(R.id.coin_input_container) ViewGroup coinInputContainer;
     @BindView(R.id.coin_icon) BipCircleImageView coinIcon;
     @BindView(R.id.coin_selector) RecyclerView coinList;
@@ -240,6 +245,7 @@ public class SendScreen extends BaseScreen {
 
 
         buttonUseMax.setOnClickListener(this::onClickUseMax);
+        buttonUseMax.setOnLongClickListener(this::onUseMaxPercent);
 
         inputCoin.setText(mLastCoin);
 
@@ -334,6 +340,28 @@ public class SendScreen extends BaseScreen {
         submit.setOnClickListener(this::startExecuteTransaction);
 
         feeValue.setVisibility(View.VISIBLE);
+    }
+
+    private boolean onUseMaxPercent(View view) {
+        ViewHelper.switchViewInvisible(amountPercentContainer, amountInputContainer, true);
+
+        button25Percent.setOnClickListener(v -> setMaxPercent(v, new BigDecimal("0.25")));
+        button50Percent.setOnClickListener(v -> setMaxPercent(v, new BigDecimal("0.5")));
+        button75Percent.setOnClickListener(v -> setMaxPercent(v, new BigDecimal("0.75")));
+        buttonMaxPercent.setOnClickListener(v -> setMaxPercent(v, new BigDecimal("1")));
+
+        return false;
+    }
+
+    private void setMaxPercent(View view, BigDecimal percent) {
+        if (tx.getAccount() == null || bdNull(tx.getAccount().get().getBalance())) {
+            inputAmount.setText("0");
+            return;
+        }
+        BigDecimal out = tx.getAccount().get().getBalance().multiply(percent);
+        inputAmount.setText(bdHuman(out));
+        tx.setAmount(out);
+        ViewHelper.switchViewInvisible(amountPercentContainer, amountInputContainer, false);
     }
 
     private boolean clearOnLongBackspace(EditText input, KeypadHandler.KeyType type, String value) {

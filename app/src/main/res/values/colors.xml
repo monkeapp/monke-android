@@ -51,6 +51,8 @@
     <color name="pinPadDisabled">#32250C78</color>
 
     <color name="greySeparator">#FFE1E1E1</color>
+    <color name="grey">#FF9E9E9E</color>
+    <color name="greyButtonSep">#9FA1A5</color>
     <color name="bottom_navigation_color">@color/colorPrimaryDark</color>
     <color name="textColorGrey">#929292</color>
     <color name="textColorGrey2">#8a000000</color>

@@ -358,6 +358,7 @@
 
     <!--    AMOUNT-->
     <androidx.cardview.widget.CardView
+        android:visibility="visible"
         android:id="@+id/amount_input_container"
         style="@style/CardInput"
         android:layout_width="0dp"
@@ -427,6 +428,109 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!--    AMOUNT USE MAX PERCENTAGE -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/amount_percent_container"
+        style="@style/CardInput"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
+        android:background="?attr/mon_inputBackground"
+        android:clickable="false"
+        android:focusable="false"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        android:weightSum="4"
+        app:layout_constraintBottom_toBottomOf="@id/amount_input_container"
+        app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@id/coin_input_container"
+        app:layout_constraintTop_toTopOf="@id/amount_input_container">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <io.monke.app.internal.views.widgets.WalletButton
+                android:id="@+id/action_perc_25"
+                style="@style/Wallet.Button.White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_copy"
+                android:text="25%"
+                android:textColor="?attr/mon_iconTint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/action_perc_50"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/greyButtonSep" />
+
+            <io.monke.app.internal.views.widgets.WalletButton
+                android:id="@+id/action_perc_50"
+                style="@style/Wallet.Button.White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_copy"
+                android:text="50%"
+                android:textColor="?attr/mon_iconTint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/action_perc_75"
+                app:layout_constraintStart_toEndOf="@id/action_perc_25"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/greyButtonSep" />
+
+            <io.monke.app.internal.views.widgets.WalletButton
+                android:id="@+id/action_perc_75"
+                style="@style/Wallet.Button.White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_copy"
+                android:text="75%"
+                android:textColor="?attr/mon_iconTint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/action_perc_max"
+                app:layout_constraintStart_toEndOf="@id/action_perc_50"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/greyButtonSep" />
+
+            <io.monke.app.internal.views.widgets.WalletButton
+                android:id="@+id/action_perc_max"
+                style="@style/Wallet.Button.White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_copy"
+                android:text="MAX"
+                android:textColor="?attr/mon_iconTint"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/action_perc_75"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
     <!--    ERROR CONTAINER-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/error_container"
@@ -478,20 +582,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_edges_half"
+        android:animateLayoutChanges="true"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/fragment_container"
-        android:animateLayoutChanges="true">
+        app:layout_constraintTop_toBottomOf="@id/fragment_container">
 
         <ImageView
             android:id="@+id/bip_progress"
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:background="@color/transparent"
-            android:src="@drawable/img_big_banana"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:elevation="2dp"
+            android:src="@drawable/img_big_banana"
             android:translationZ="1dp"
             android:visibility="invisible"
 
