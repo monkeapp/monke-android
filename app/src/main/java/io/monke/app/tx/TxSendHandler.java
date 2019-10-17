@@ -23,7 +23,6 @@ import network.minter.blockchain.models.BCResult;
 import network.minter.blockchain.models.TransactionCommissionValue;
 import network.minter.blockchain.models.TransactionSendResult;
 import network.minter.blockchain.models.operational.OperationInvalidDataException;
-import network.minter.blockchain.models.operational.OperationType;
 import network.minter.blockchain.models.operational.Transaction;
 import network.minter.blockchain.models.operational.TransactionSign;
 import network.minter.core.MinterSDK;
@@ -35,13 +34,10 @@ import network.minter.explorer.repo.GateTransactionRepository;
 import timber.log.Timber;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static io.monke.app.apis.reactive.ReactiveGate.createGateErrorPlain;
 import static io.monke.app.apis.reactive.ReactiveGate.rxGate;
 import static io.monke.app.apis.reactive.ReactiveGate.toGateError;
 import static io.monke.app.internal.helpers.MathHelper.bdGTE;
-import static io.monke.app.internal.helpers.MathHelper.bdHuman;
 import static io.monke.app.internal.helpers.MathHelper.bdLT;
-import static io.monke.app.internal.helpers.MathHelper.bdLTE;
 import static io.monke.app.internal.helpers.MathHelper.bdMax;
 import static io.monke.app.internal.helpers.MathHelper.bdMin;
 
@@ -98,53 +94,47 @@ public class TxSendHandler extends TxHandler {
     }
 
     public Observable<GateResult<TransactionSendResult>> send() {
-        Optional<AccountItem> mntAccount = findAccountByCoin(MinterSDK.DEFAULT_COIN);
-        Optional<AccountItem> sendAccount = findAccountByCoin(mFromAccount.getCoin());
+        final Optional<AccountItem> bananaAccount = findAccountByCoin(BuildConfig.BANANA_COIN);
 
-        final boolean enoughBaseCoinForCommission = bdGTE(mntAccount.get().getBalance(), OperationType.SendCoin.getFee());
-
-        // default coin for pay fee - MNT (base coin)
-        final GateResult<TransactionCommissionValue> val = new GateResult<>();
-        val.result = new TransactionCommissionValue();
-        val.result.value = OperationType.SendCoin.getFee().multiply(Transaction.VALUE_MUL_DEC).toBigInteger();
-
-        Observable<GateResult<TransactionCommissionValue>> exchangeResolver = Observable.just(val);
-
-        // if enough balance on MNT account, set gas coin MNT (BIP)
-        if (enoughBaseCoinForCommission) {
-            Timber.d("Enough balance in %s to pay fee", MinterSDK.DEFAULT_COIN);
-            Timber.tag("TX Send").d("Resolving base coin commission %s", MinterSDK.DEFAULT_COIN);
-            mGasCoin = mntAccount.get().getCoin();
+        // if no banana account or is zero balance - error, not enough balance
+        if (!bananaAccount.isPresent() || bananaAccount.get().getBalance().equals(BigDecimal.ZERO)) {
+            GateResult<TransactionSendResult> error = new GateResult<>();
+            error.error = new GateResult.ErrorResult();
+            error.error.code = BCResult.ResultCode.WrongGasCoin.getValue();
+            error.error.coin = BuildConfig.BANANA_COIN;
+            error.error.message = "Insufficient funds in " + BuildConfig.BANANA_COIN;
+            return Observable.just(GateResult.copyError(error));
         }
-        // if sending account is not MNT (BIP), set gas coin CUSTOM
-        else if (!sendAccount.get().getCoin().equals(MinterSDK.DEFAULT_COIN)) {
-            Timber.d("Not enough balance in %s to pay fee, using %s", MinterSDK.DEFAULT_COIN, mFromAccount.getCoin());
-            mGasCoin = sendAccount.get().getCoin();
-            // otherwise getting
-            Timber.tag("TX Send").d("Resolving custom coin commission %s", mFromAccount.getCoin());
-            // resolving fee currency for custom currency
-            // creating tx
-            try {
-                final Transaction preTx = new Transaction.Builder(new BigInteger("1"))
-                        .setGasCoin(mGasCoin)
-                        .setGasPrice(mGasPrice)
-                        .sendCoin()
-                        .setCoin(mFromAccount.coin)
-                        .setTo(getRecipient())
-                        .setValue(getAmount())
-                        .build();
 
-                final SecretData preData = secretStorage.getSecret(mFromAccount.address);
-                final TransactionSign preSign = preTx.signSingle(preData.getPrivateKey());
+        Observable<GateResult<TransactionCommissionValue>> exchangeResolver;
 
-                exchangeResolver = rxGate(getEstimateRepo().getTransactionCommission(preSign)).onErrorResumeNext(toGateError());
-            } catch (OperationInvalidDataException e) {
-                Timber.w(e);
-                final GateResult<TransactionCommissionValue> commissionValue = new GateResult<>();
-                val.result.value = OperationType.SendCoin.getFee().multiply(Transaction.VALUE_MUL_DEC).toBigInteger();
-                exchangeResolver = Observable.just(commissionValue);
-            }
+        Timber.d("Not enough balance in %s to pay fee, using %s", MinterSDK.DEFAULT_COIN, mFromAccount.getCoin());
+        mGasCoin = bananaAccount.get().getCoin();
+        // otherwise getting
+        Timber.tag("TX Send").d("Resolving custom coin commission %s", mFromAccount.getCoin());
+        // resolving fee currency for custom currency
+        // creating tx
+        try {
+            final Transaction preTx = new Transaction.Builder(new BigInteger("1"))
+                    .setGasCoin(mGasCoin)
+                    .setGasPrice(mGasPrice)
+                    .sendCoin()
+                    .setCoin(mFromAccount.coin)
+                    .setTo(getRecipient())
+                    .setValue(getAmount())
+                    .build();
+
+            final SecretData preData = secretStorage.getSecret(mFromAccount.address);
+            final TransactionSign preSign = preTx.signSingle(preData.getPrivateKey());
+
+            exchangeResolver = rxGate(getEstimateRepo().getTransactionCommission(preSign)).onErrorResumeNext(toGateError());
+        } catch (OperationInvalidDataException e) {
+            GateResult<TransactionSendResult> error = new GateResult<>();
+            error.error = new GateResult.ErrorResult();
+            error.error.message = e.getMessage();
+            return Observable.just(error);
         }
+
 
         // creating preparation result to send transaction
         return Observable.combineLatest(
@@ -174,46 +164,15 @@ public class TxSendHandler extends TxHandler {
 
                     final BigDecimal amountToSend;
 
-                    // don't calc fee if enough balance in base coin and we are sending not a base coin (MNT or BIP)
-                    if (enoughBaseCoinForCommission && !mFromAccount.getCoin().equals(MinterSDK.DEFAULT_COIN)) {
-                        cntRes.commission = BigDecimal.ZERO;
+                    // if after commission calculation, we see, banana balance less than commission - error
+                    if (bdLT(bananaAccount.get().getBalance(), cntRes.commission)) {
+                        GateResult<TransactionSendResult> error = new GateResult<>();
+                        error.error = new GateResult.ErrorResult();
+                        error.error.message = "Insufficient funds in " + BuildConfig.BANANA_COIN;
+                        return Observable.just(error);
                     }
 
-                    // if balance enough to send required sum + fee, do nothing
-                    if (bdLTE(mAmount.add(cntRes.commission), mFromAccount.getBalance())) {
-                        Timber.tag("TX Send").d("Don't change sending amount - balance enough to send");
-                        amountToSend = mAmount;
-                    }
-                    // if balance not enough to send required sum + fee - subtracting fee from sending sum ("use max" for example)
-                    else {
-                        amountToSend = mAmount.subtract(cntRes.commission);
-                        Timber.tag("TX Send").d("Subtracting sending amount (-%s): balance not enough to send", cntRes.commission);
-                    }
-
-
-                    // if after subtracting fee from sending sum has become less than account balance at all, returning error with message "insufficient funds"
-                    if (bdLT(amountToSend, 0)) {
-                        GateResult<TransactionSendResult> errorRes;
-                        final BigDecimal balanceMustBe = cntRes.commission.add(mAmount);
-                        if (bdLT(mAmount, mFromAccount.getBalance())) {
-                            final BigDecimal notEnough = cntRes.commission.subtract(mFromAccount.getBalance().subtract(mAmount));
-                            Timber.d("Amount: %s, fromAcc: %s, diff: %s", bdHuman(mAmount), bdHuman(mFromAccount.getBalance()), bdHuman(notEnough));
-                            errorRes = createGateErrorPlain(
-                                    String.format("Insufficient funds: not enough %s %s, wanted: %s %s", bdHuman(notEnough), mFromAccount.getCoin(), bdHuman(balanceMustBe), mFromAccount.getCoin()),
-                                    BCResult.ResultCode.InsufficientFunds.getValue(),
-                                    400
-                            );
-                        } else {
-                            Timber.d("Amount: %s, fromAcc: %s, diff: %s", bdHuman(mAmount), bdHuman(mFromAccount.getBalance()), bdHuman(balanceMustBe));
-                            errorRes = createGateErrorPlain(
-                                    String.format("Insufficient funds: wanted %s %s", bdHuman(balanceMustBe), mFromAccount.getCoin()),
-                                    BCResult.ResultCode.InsufficientFunds.getValue(),
-                                    400
-                            );
-                        }
-
-                        return Observable.just(errorRes);
-                    }
+                    amountToSend = mAmount;
 
                     Timber.tag("TX Send").d("Send data: gasCoin=%s, coin=%s, to=%s, from=%s, amount=%s",
                             mGasCoin,

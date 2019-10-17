@@ -107,7 +107,7 @@ public class MonkeKeyboard extends InputMethodService {
     }
 
     public void setError(CharSequence error) {
-        if(error != null) {
+        if (error != null) {
             showProgress(false);
         }
         errorText.setText(error);

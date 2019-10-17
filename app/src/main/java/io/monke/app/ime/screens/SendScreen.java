@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import io.monke.app.R;
 import io.monke.app.account.AccountSelectedAdapter;
+import io.monke.app.ime.KeypadHandler;
 import io.monke.app.ime.MonkeKeyboard;
 import io.monke.app.ime.keyboards.DigitKeypad;
 import io.monke.app.ime.keyboards.HexKeypad;
@@ -96,8 +97,9 @@ public class SendScreen extends BaseScreen {
     private ShareListAdapter mShareListAdapter = new ShareListAdapter();
     private boolean mFocusedInteraction = false;
     private boolean mFormValid = false;
-
-
+    private int mOkInputColor;
+    private int mErrorInputColor;
+    private AccountItem mCurrentAccount;
     public enum FocusWidget {
         Address,
         Coin,
@@ -110,12 +112,10 @@ public class SendScreen extends BaseScreen {
 
     }
 
-    private int mOkInputColor;
-    private int mErrorInputColor;
-
     public boolean enoughBananaToAvoidFee() {
         return bdGTE(getKeyboard().getBananaAccount().get().getBalance(), TxHandler.MIN_BANANA_ACC);
     }
+
 
     @Override
     protected void onInit(MonkeKeyboard keyboard, View rootView) {
@@ -132,10 +132,12 @@ public class SendScreen extends BaseScreen {
 
         mDigitKeypad = new DigitKeypad(keyboardNumpad);
         mDigitKeypad.attachInput(inputAmount);
+        mDigitKeypad.setOnLongKeyListener((k, v) -> clearOnLongBackspace(inputAmount, k, v));
 
         {
             mHexKeypad = new HexKeypad(keyboardHex);
             mHexKeypad.attachInput(inputAddress);
+            mHexKeypad.setOnLongKeyListener((k, v) -> clearOnLongBackspace(inputAddress, k, v));
         }
 
         {
@@ -143,6 +145,7 @@ public class SendScreen extends BaseScreen {
             coinList.setAdapter(mCoinListAdapter);
             mCoinListAdapter.notifyDataSetChanged();
             mCoinListAdapter.setOnClickListener(item -> {
+                mCurrentAccount = item;
                 coinIcon.setImageUrl(item.getAvatar());
                 inputCoin.setText(item.getCoin());
                 tx.setAccount(item);
@@ -333,25 +336,35 @@ public class SendScreen extends BaseScreen {
         feeValue.setVisibility(View.VISIBLE);
     }
 
+    private boolean clearOnLongBackspace(EditText input, KeypadHandler.KeyType type, String value) {
+        if (type == KeypadHandler.KeyType.Backspace) {
+            input.setText("");
+            return false;
+        }
+        return false;
+    }
+
     private void startExecuteTransaction(View view) {
         getKeyboard().setError(null);
         if (!mInputGroup.validate(false)) {
             return;
         }
         getKeyboard().showProgress(true);
-//        submit.setEnabled(false);
         unsubscribeOnDestroy(tx.send().subscribe(this::onExecuteSuccess, this::onExecuteFailed));
     }
 
 
     private void onExecuteFailed(final Throwable t) {
+        clearWidgetFocus();
+        getKeyboard().showProgress(false);
         getKeyboard().setError(t.getMessage());
-        submit.setEnabled(true);
+
     }
 
     private void onExecuteError(GateResult<?> errorResult) {
+        clearWidgetFocus();
+        getKeyboard().showProgress(false);
         getKeyboard().setError(errorResult.getMessage());
-        submit.setEnabled(true);
     }
 
     private void onExecuteSuccess(final GateResult<TransactionSendResult> result) {
@@ -379,7 +392,6 @@ public class SendScreen extends BaseScreen {
                 getResources().getString(R.string.share_title_tx, result.result.txHash.toShortString()),
                 MinterExplorerApi.newFrontUrl().addPathSegment("transactions").addPathSegment(result.result.txHash.toString()).toString()
         ));
-//        shareItems.add(new ShareItem());
 
         int stringResTitle = ViewHelper.getResFromStyle(getKeyboard(), R.attr.mon_sent_share_title);
         shareTitle.setText(HtmlCompat.fromHtml(getKeyboard().getString(stringResTitle)));
@@ -404,9 +416,13 @@ public class SendScreen extends BaseScreen {
     }
 
     private void onUpdateAccount(AddressAccount account) {
-        tx.setAccount(account.findByCoin(MinterSDK.DEFAULT_COIN));
+        if (mCurrentAccount == null) {
+            mCurrentAccount = account.findByCoin(MinterSDK.DEFAULT_COIN);
+        }
+        tx.setAccount(mCurrentAccount);
         updateCoins(account.getAccountsItems());
-        setAvailable(account.getTotalBalance());
+        setAvailable(mCurrentAccount.getBalance());
+        coinIcon.setImageUrl(mCurrentAccount.getAvatar());
 
         CharSequence cs;
 

@@ -55,6 +55,29 @@ public class HexKeypad extends KeypadHandler {
                             }
                         }
                     });
+
+                    item.setOnLongClickListener(v -> {
+                        if (v.getTag() != null) {
+                            String tagVal = (String) v.getTag();
+                            if (mSpecialKeys.containsKey(tagVal)) {
+                                KeyType kt = mSpecialKeys.get(tagVal);
+                                if (kt == KeyType.Simple) {
+                                    return doOnLongKey(kt, tagVal);
+                                } else {
+                                    return doOnLongKey(kt, null);
+                                }
+                            } else {
+                                return doOnLongKey(KeyType.Simple, tagVal);
+                            }
+                        } else if (v instanceof TextView) {
+                            CharSequence val = ((TextView) v).getText();
+                            if (val != null) {
+                                return doOnLongKey(KeyType.Simple, val.toString());
+                            }
+                        }
+
+                        return false;
+                    });
                 });
     }
 }

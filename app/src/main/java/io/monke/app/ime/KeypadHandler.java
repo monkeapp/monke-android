@@ -15,6 +15,7 @@ import static io.monke.app.internal.common.Preconditions.checkArgument;
 public abstract class KeypadHandler {
 
     private OnKeyListener mOnKeyListener;
+    private OnLongKeyListener mOnLongKeyListener;
 
     public enum KeyType {
         Simple(-1),
@@ -40,6 +41,10 @@ public abstract class KeypadHandler {
 
     public void setOnKeyListener(OnKeyListener listener) {
         mOnKeyListener = listener;
+    }
+
+    public void setOnLongKeyListener(OnLongKeyListener listener) {
+        mOnLongKeyListener = listener;
     }
 
     public void attachInput(@NonNull final EditText editText) {
@@ -104,6 +109,18 @@ public abstract class KeypadHandler {
         if (mOnKeyListener != null) {
             mOnKeyListener.onKey(type, value);
         }
+    }
+
+    protected boolean doOnLongKey(KeyType type, String value) {
+        if (mOnLongKeyListener != null) {
+            return mOnLongKeyListener.onLongKey(type, value);
+        }
+
+        return false;
+    }
+
+    public interface OnLongKeyListener {
+        boolean onLongKey(KeyType type, @Nullable String value);
     }
 
     public interface OnKeyListener {
