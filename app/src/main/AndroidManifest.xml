@@ -33,6 +33,7 @@
         </activity>
         <activity android:name=".settings.ui.SettingsActivity" />
         <activity android:name=".settings.ui.BackupSeedActivity" />
+        <activity android:name=".setup.ui.BuyBananaActivity" />
 
         <service
             android:name=".services.LiveBalanceService"

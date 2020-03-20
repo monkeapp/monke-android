@@ -33,6 +33,7 @@ import io.monke.app.internal.helpers.IntentHelper;
 import io.monke.app.internal.views.list.BorderedItemSeparator;
 import io.monke.app.settings.contract.SettingsView;
 import io.monke.app.settings.views.SettingsPresenter;
+import io.monke.app.setup.ui.BuyBananaActivity;
 import io.monke.app.setup.ui.ChangeWalletBottomDialog;
 import io.monke.app.setup.ui.DepositBottomDialog;
 import io.monke.app.splash.ui.SplashActivity;
@@ -172,6 +173,11 @@ public class SettingsActivity extends BaseMvpInjectActivity implements SettingsV
     @Override
     public void startIntent(Intent intent) {
         startActivity(intent);
+    }
+
+    @Override
+    public void startBuyBanana() {
+        startActivity(new Intent(this, BuyBananaActivity.class));
     }
 
     @Override

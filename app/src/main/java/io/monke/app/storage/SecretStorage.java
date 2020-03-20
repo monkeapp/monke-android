@@ -73,7 +73,7 @@ public class SecretStorage {
         final SecureRandom random = new SecureRandom();
         final MnemonicResult mnemonicResult = NativeBip39.encodeBytes(random.generateSeed(16));
         final BytesData seed = new BytesData(mnemonicResult.toSeed());
-        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getData());
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getBytes());
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
         final PrivateKey privateKey = extKey.getPrivateKey();
         final PublicKey publicKey = privateKey.getPublicKey(false);
@@ -122,7 +122,7 @@ public class SecretStorage {
         checkNotNull(seed);
         checkArgument(seed.size() > 0, "Seed can't be empty");
 
-        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getData());
+        final HDKey rootKey = NativeHDKeyEncoder.makeBip32RootKey(seed.getBytes());
         final HDKey extKey = NativeHDKeyEncoder.makeExtenderKey(rootKey);
         final PrivateKey privateKey = extKey.getPrivateKey();
         final PublicKey publicKey = privateKey.getPublicKey(false);

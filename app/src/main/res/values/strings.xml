@@ -59,4 +59,9 @@
     <string name="fee_text_base" formatted="false">Fee %s %s</string>
     <string name="fee_text_banana" formatted="false">Fee 1%% to Banana + %s %s</string>
     <string name="btn_change_wallet">Change Wallet</string>
+    <string name="hint_amount_caps">AMOUNT</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="dialog_title_select_account">Select Account</string>
+    <string name="attention_please_wait">Please, wait a few seconds…</string>
+    <string name="btn_view_tx">View transaction</string>
 </resources>

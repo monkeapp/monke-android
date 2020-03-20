@@ -62,6 +62,7 @@ import io.monke.app.internal.Monke;
 import io.monke.app.internal.helpers.DateHelper;
 import io.monke.app.internal.helpers.UnzipUtil;
 import io.monke.app.internal.storage.KVStorage;
+import io.monke.app.services.LiveBalanceService;
 import network.minter.blockchain.MinterBlockChainApi;
 import network.minter.core.MinterSDK;
 import network.minter.core.bip39.NativeBip39;
@@ -91,7 +92,18 @@ public class MonkeModule {
 
         initCoreSdk(context);
         MinterBlockChainApi.initialize(debug);
-        MinterExplorerApi.initialize(debug);
+
+        //noinspection ConstantConditions
+        if (BuildConfig.EXPLORER_API_URL != null) {
+            MinterExplorerApi.initialize(
+                    BuildConfig.EXPLORER_API_URL,
+                    BuildConfig.GATE_API_URL,
+                    debug);
+            LiveBalanceService.LIVE_BALANCE_URL = BuildConfig.LIVE_BALANCE_URL;
+        } else {
+            MinterExplorerApi.initialize(debug);
+
+        }
 
         Timber.uprootAll();
 

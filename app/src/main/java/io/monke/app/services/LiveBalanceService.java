@@ -59,7 +59,7 @@ import timber.log.Timber;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class LiveBalanceService extends Service {
-
+    public static String LIVE_BALANCE_URL = BuildConfig.LIVE_BALANCE_URL;
     private final IBinder mBinder = new LocalBinder();
     @Inject SecretStorage secretStorage;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
@@ -174,7 +174,7 @@ public class LiveBalanceService extends Service {
                 }
             };
             Options opts = new Options();
-            mClient = new Client(BuildConfig.LIVE_BALANCE_URL + "?format=protobuf", opts, listener);
+            mClient = new Client(LIVE_BALANCE_URL + "?format=protobuf", opts, listener);
             mClient.connect();
 
             mAddress = secretStorage.getAddresses().get(0);

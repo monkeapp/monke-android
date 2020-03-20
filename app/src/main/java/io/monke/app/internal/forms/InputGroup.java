@@ -309,6 +309,12 @@ public class InputGroup {
                 });
     }
 
+    private InputErrorView mExtErrorView = null;
+
+    public void setErrorView(InputErrorView errorView) {
+        mExtErrorView = errorView;
+    }
+
     private boolean validate(EditText editText, boolean withError) {
         if (!mInputValidators.containsKey(editText)) {
             return true;
@@ -319,7 +325,9 @@ public class InputGroup {
                 .filter(item -> {
                     boolean valid = item.validate(t);
                     if (withError) {
-                        if (editText.getParent() != null && editText.getParent().getParent() instanceof TextInputLayout) {
+                        if (mExtErrorView != null) {
+                            mExtErrorView.setError(item.getErrorMessage());
+                        } else if (editText.getParent() != null && editText.getParent().getParent() instanceof TextInputLayout) {
                             final TextInputLayout lay = ((TextInputLayout) editText.getParent().getParent());
                             lay.post(() -> {
                                 if (!valid) {
@@ -349,6 +357,10 @@ public class InputGroup {
 
         // count validated == validators length
         return cnt == mInputValidators.get(editText).size();
+    }
+
+    public interface InputErrorView {
+        void setError(CharSequence errorMessage);
     }
 
     public interface OnFormValidateListener {

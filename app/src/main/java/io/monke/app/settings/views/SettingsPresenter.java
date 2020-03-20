@@ -42,13 +42,13 @@ import static android.content.Context.KEYGUARD_SERVICE;
 @InjectViewState
 public class SettingsPresenter extends MvpBasePresenter<SettingsView> {
 
+    private final static int REQUEST_AUTH = 1005;
     @Inject SecretStorage secretStorage;
     @Inject CachedRepository<AddressAccount, AccountStorage> accountStorage;
     @Inject
     CachedRepository<ExpResult<List<DelegationInfo>>, CachedExplorerAddressRepository> expAddressRepo;
-
     @Inject SharedPreferences prefs;
-    private final static int REQUEST_AUTH = 1005;
+    @Inject Resources res;
     private MultiRowAdapter mAdapter;
 
     @Inject
@@ -86,72 +86,6 @@ public class SettingsPresenter extends MvpBasePresenter<SettingsView> {
                         getViewState().setDelegatedBalance(BigDecimal.ZERO);
                     }
                 });
-    }
-    @Inject Resources res;
-
-    private void onClickChangeWallet(SettingsItemRow.ItemData itemData) {
-        getViewState().startChangeWalletDialog(address -> {
-            accountStorage.observe()
-                    .doOnSubscribe(this::unsubscribeOnDestroy)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(res -> {
-                        Timber.d("Loaded balance");
-                        AccountItem bip = res.findByCoin(MinterSDK.DEFAULT_COIN);
-                        getViewState().setBalance(bip.getBalance());
-                    });
-            expAddressRepo.observe()
-                    .doOnSubscribe(this::unsubscribeOnDestroy)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(res -> {
-                        Timber.d("Loaded delegated");
-                        if (res.getMeta().additional != null && res.getMeta().additional.delegatedAmount != null) {
-                            getViewState().setDelegatedBalance(res.meta.additional.delegatedAmount);
-                        } else {
-                            getViewState().setDelegatedBalance(BigDecimal.ZERO);
-                        }
-                    });
-            accountStorage.update(true);
-            expAddressRepo.update(true);
-        });
-    }
-
-    private void onClickAbout(SettingsItemRow.ItemData itemData) {
-        getViewState().startAbout();
-    }
-
-    private void onClickTelegram(SettingsItemRow.ItemData itemData) {
-        getViewState().startTelegram();
-    }
-
-    private void onClickBuyBanana(SettingsItemRow.ItemData itemData) {
-
-    }
-
-    private void onClickTransactions(SettingsItemRow.ItemData itemData) {
-        getViewState().startTransactionsList(secretStorage.getAddresses().get(0).toString());
-    }
-
-    private void onClickDonate(SettingsItemRow.ItemData itemData) {
-        getViewState().startDonationDialog(
-                HtmlCompat.fromHtml(res.getString(R.string.deposit_donate_title)),
-                "Mx408fb7d25f40d0361ee370cff812c1fe1fac74a7",
-                prefs.getString(PrefKeys.QR_TEAM_BITMAP_PATH, null)
-        );
-    }
-
-    private void onClickRate(SettingsItemRow.ItemData itemData) {
-        getViewState().startRateApp();
-    }
-
-    private void onClickReport(SettingsItemRow.ItemData itemData) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "monkeapp@gmail.com", null));
-        intent.putExtra(Intent.EXTRA_EMAIL, "monkeapp@gmail.com");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Monke Report");
-        intent.putExtra(Intent.EXTRA_TEXT, String.format("\n\n\n\nAndroid %d\nMonke version: %s\n", Build.VERSION.SDK_INT, BuildConfig.VERSION_NAME));
-
-        getViewState().startIntent(Intent.createChooser(intent, "Send Report"));
     }
 
     @Override
@@ -208,6 +142,71 @@ public class SettingsPresenter extends MvpBasePresenter<SettingsView> {
 
         mAdapter.addRows(rows);
         getViewState().setAdapter(mAdapter);
+    }
+
+    private void onClickChangeWallet(SettingsItemRow.ItemData itemData) {
+        getViewState().startChangeWalletDialog(address -> {
+            accountStorage.observe()
+                    .doOnSubscribe(this::unsubscribeOnDestroy)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(res -> {
+                        Timber.d("Loaded balance");
+                        AccountItem bip = res.findByCoin(MinterSDK.DEFAULT_COIN);
+                        getViewState().setBalance(bip.getBalance());
+                    });
+            expAddressRepo.observe()
+                    .doOnSubscribe(this::unsubscribeOnDestroy)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(res -> {
+                        Timber.d("Loaded delegated");
+                        if (res.getMeta().additional != null && res.getMeta().additional.delegatedAmount != null) {
+                            getViewState().setDelegatedBalance(res.meta.additional.delegatedAmount);
+                        } else {
+                            getViewState().setDelegatedBalance(BigDecimal.ZERO);
+                        }
+                    });
+            accountStorage.update(true);
+            expAddressRepo.update(true);
+        });
+    }
+
+    private void onClickAbout(SettingsItemRow.ItemData itemData) {
+        getViewState().startAbout();
+    }
+
+    private void onClickTelegram(SettingsItemRow.ItemData itemData) {
+        getViewState().startTelegram();
+    }
+
+    private void onClickBuyBanana(SettingsItemRow.ItemData itemData) {
+        getViewState().startBuyBanana();
+    }
+
+    private void onClickTransactions(SettingsItemRow.ItemData itemData) {
+        getViewState().startTransactionsList(secretStorage.getAddresses().get(0).toString());
+    }
+
+    private void onClickDonate(SettingsItemRow.ItemData itemData) {
+        getViewState().startDonationDialog(
+                HtmlCompat.fromHtml(res.getString(R.string.deposit_donate_title)),
+                "Mx408fb7d25f40d0361ee370cff812c1fe1fac74a7",
+                prefs.getString(PrefKeys.QR_TEAM_BITMAP_PATH, null)
+        );
+    }
+
+    private void onClickRate(SettingsItemRow.ItemData itemData) {
+        getViewState().startRateApp();
+    }
+
+    private void onClickReport(SettingsItemRow.ItemData itemData) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "monkeapp@gmail.com", null));
+        intent.putExtra(Intent.EXTRA_EMAIL, "monkeapp@gmail.com");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Monke Report");
+        intent.putExtra(Intent.EXTRA_TEXT, String.format("\n\n\n\nAndroid %d\nMonke version: %s\n", Build.VERSION.SDK_INT, BuildConfig.VERSION_NAME));
+
+        getViewState().startIntent(Intent.createChooser(intent, "Send Report"));
     }
 
     private void onClickBackup(SettingsItemRow.ItemData itemData) {

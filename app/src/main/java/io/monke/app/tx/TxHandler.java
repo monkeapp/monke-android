@@ -55,29 +55,29 @@ public class TxHandler {
         return mAccount;
     }
 
-    protected CachedRepository<AddressAccount, AccountStorage> getAccountStorage() {
+    public CachedRepository<AddressAccount, AccountStorage> getAccountStorage() {
         return mAccountStorage;
     }
 
-    protected Optional<AccountItem> findAccountByCoin(String coin) {
+    public Optional<AccountItem> findAccountByCoin(String coin) {
         return Stream.of(getAccountStorage().getData().getAccountsItems())
                 .filter(item -> item.getCoin().equals(coin.toUpperCase()))
                 .findFirst();
     }
 
-    protected GateGasRepository getGasRepo() {
+    public GateGasRepository getGasRepo() {
         return mGasRepo;
     }
 
-    protected GateEstimateRepository getEstimateRepo() {
+    public GateEstimateRepository getEstimateRepo() {
         return mEstimateRepo;
     }
 
-    protected GateTransactionRepository getTxRepo() {
+    public GateTransactionRepository getTxRepo() {
         return mTxRepo;
     }
 
-    protected Observable<TxInitData> getTxInitData(MinterAddress address) {
+    public Observable<TxInitData> getTxInitData(MinterAddress address) {
         return Observable.combineLatest(
                 rxGate(getEstimateRepo().getTransactionCount(address)),
                 rxGate(getGasRepo().getMinGas()),

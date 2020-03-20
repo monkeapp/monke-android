@@ -287,6 +287,14 @@
     </style>
 
 
+    <style name="Wallet.Input.EditText" parent="Wallet">
+        <item name="colorControlNormal">#E7E6F1</item>
+        <item name="colorControlActivated">#E7E6F1</item>
+        <item name="colorControlHighlight">#E7E6F1</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+
     <style name="Wallet.ItemHeader">
         <item name="android:gravity">bottom</item>
         <item name="android:fontFamily">@string/font_medium</item>

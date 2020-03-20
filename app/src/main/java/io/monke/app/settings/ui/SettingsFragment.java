@@ -20,6 +20,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import dagger.android.support.AndroidSupportInjection;
 import io.monke.app.R;
 import io.monke.app.internal.helpers.IntentHelper;
+import io.monke.app.setup.ui.BuyBananaActivity;
 import io.monke.app.splash.ui.SplashActivity;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,6 +45,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        findPreference("set_buy_banana").setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(getActivity(), BuyBananaActivity.class));
+            return true;
+        });
 
         findPreference("pref_day_night").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override

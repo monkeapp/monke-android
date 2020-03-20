@@ -33,4 +33,7 @@ public interface SettingsView extends MvpView {
     void startChangeWalletDialog(ChangeWalletBottomDialog.OnWalletChangedListener listener);
     @StateStrategyType(OneExecutionStateStrategy.class)
     void startIntent(Intent intent);
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void startBuyBanana();
+
 }

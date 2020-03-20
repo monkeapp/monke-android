@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="wrap_content"
-                                                   android:background="@color/white"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_margin_left"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/margin_edges"/>
+        app:layout_constraintGuide_begin="@dimen/margin_edges" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_margin_right"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/margin_edges"/>
+        app:layout_constraintGuide_end="@dimen/margin_edges" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guide_margin_top"
@@ -29,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintGuide_begin="@dimen/margin_edges_medium"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -42,7 +41,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/qr"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toTopOf="@id/guide_margin_top"/>
+        app:layout_constraintTop_toTopOf="@id/guide_margin_top" />
 
     <ImageView
         android:id="@+id/qr"
@@ -52,7 +51,7 @@
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintTop_toTopOf="@id/guide_margin_top"
         app:layout_constraintWidth_percent=".39"
-        tools:src="@drawable/img_big_banana"/>
+        tools:src="@drawable/img_big_banana" />
 
     <TextView
         android:id="@+id/address_hint"
@@ -63,7 +62,7 @@
         android:textColor="#8a000000"
         android:textSize="@dimen/text_size_12"
         app:layout_constraintBottom_toTopOf="@id/address_text_container"
-        app:layout_constraintStart_toStartOf="@id/guide_margin_left"/>
+        app:layout_constraintStart_toStartOf="@id/guide_margin_left" />
 
 
     <androidx.cardview.widget.CardView
@@ -81,8 +80,7 @@
         app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/qr"
-        >
+        app:layout_constraintTop_toBottomOf="@id/qr">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -134,7 +132,7 @@
         android:text="@string/btn_copy_address_clipboard"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/address_text_container"/>
+        app:layout_constraintTop_toBottomOf="@id/address_text_container" />
 
     <TextView
         android:id="@+id/button_done"
@@ -145,13 +143,13 @@
         android:text="@string/btn_done"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/button_copy"/>
+        app:layout_constraintTop_toBottomOf="@id/button_copy" />
 
     <Space
         android:layout_width="0dp"
         android:layout_height="@dimen/margin_edges_half"
         app:layout_constraintEnd_toEndOf="@id/guide_margin_right"
         app:layout_constraintStart_toStartOf="@id/guide_margin_left"
-        app:layout_constraintTop_toBottomOf="@id/button_done"/>
+        app:layout_constraintTop_toBottomOf="@id/button_done" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
